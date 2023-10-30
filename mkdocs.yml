@@ -1,12 +1,12 @@
 site_name: Automate Your Workflow With Snakemake
 site_author: NeSI
 site_dir: public
-site_url: "https://nesi.github.io/snakemake_workshop"
+site_url: "https://otagobioinformaticsspringschool.github.io/snakemake_workshop"
 
 #Repository information
 
-repo_name:  nesi/snakemake_workshop 
-repo_url: https://github.com/nesi/snakemake_workshop
+repo_name:  otagobioformaticsspringschool/snakemake_workshop 
+repo_url: https://github.com/otagobioinformaticsspringschool/snakemake_workshop
 
 
 theme:
