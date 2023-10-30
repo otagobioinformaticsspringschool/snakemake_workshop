@@ -1,7 +1,8 @@
 This workshop has been modified for delivery at the Otago Bioinformatics Spring School
 
+The material has been modified to use the data and workflow from [The Carpentries - Genomic Data Carpentry workshop](https://datacarpentry.org/wrangling-genomics/) workshop
 
-The oirignal material can be found below
+The orignal material can be found below
 
 # Online workflow code-along: Introduction to Snakemake
 
