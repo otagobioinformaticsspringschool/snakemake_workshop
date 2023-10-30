@@ -1,5 +1,5 @@
 site_name: Automate Your Workflow With Snakemake
-site_author: NeSI
+site_author: "Original: NeSI. Modifified for OBSS"
 site_dir: public
 site_url: "https://otagobioinformaticsspringschool.github.io/snakemake_workshop"
 
