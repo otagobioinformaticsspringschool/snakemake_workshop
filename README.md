@@ -1,4 +1,6 @@
-# Online workflow code-along: Introduction to Snakemake
+This workshop has been modified for delivery at the Otago Bioinformatics Spring School
+
+# Original: Online workflow code-along: Introduction to Snakemake
 
 Workshop material : https://nesi.github.io/snakemake_workshop/
 
