@@ -226,13 +226,14 @@ The use of the word `input` in `rule all` can be confusing, but in this context,
 
 ??? code-compare "Edit snakefile"
 
-    ```diff # target OUTPUT files for the whole workflow # target OUTPUT files for the whole workflow
+    ```diff
+    # target OUTPUT files for the whole workflow # target OUTPUT files for the whole workflow
     rule all:
-    input:
-    + "../results/fastqc/SRR2584863_1.trim.sub_fastqc.html",
-    + "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html",
-    + "../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip",
-    + "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"
+        input:
+    +       "../results/fastqc/SRR2584863_1.trim.sub_fastqc.html",
+    +       "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html",
+    +       "../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip",
+    +       "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"
 
     # workflow
     - rule my_rule:
