@@ -1,16 +1,15 @@
 # 03 - Create a basic workflow
 
-
-
-
 ## 3.01 Aim
 
 ---
+
 !!! info ""
 
     Let's create a basic workflow that will do some of the analysis steps for genetic data. We will have three samples with two files each - six files in total. These files will be processed through the below workflow, passing through three software.
 
 ---
+
 <center>
 ![rulegraph_1](./images/rulegraph_1.png)
 </center>
@@ -20,19 +19,19 @@ We have paired end sequencing data for three samples `NA24631` to process in the
 !!! terminal "code"
 
     ```bash
-    ls -lh ./data/
+    ls -lh data/trimmed_fastq_small/
     ```
 
     ??? success "output"
-    
+
         ```bash
-        total 13M
-        -rw-rw----+ 1 lkemp nesi99991 2.1M May 11 12:06 NA24631_1.fastq.gz
-        -rw-rw----+ 1 lkemp nesi99991 2.3M May 11 12:06 NA24631_2.fastq.gz
-        -rw-rw----+ 1 lkemp nesi99991 2.1M May 11 12:06 NA24694_1.fastq.gz
-        -rw-rw----+ 1 lkemp nesi99991 2.3M May 11 12:06 NA24694_2.fastq.gz
-        -rw-rw----+ 1 lkemp nesi99991 1.8M May 11 12:06 NA24695_1.fastq.gz
-        -rw-rw----+ 1 lkemp nesi99991 1.9M May 11 12:06 NA24695_2.fastq.gz
+        total 332M
+        -rw-rw----+ 1 murray.cadzow nesi02659 58M Jul  6  2018 SRR2584863_1.trim.sub.fastq
+        -rw-rw----+ 1 murray.cadzow nesi02659 53M Jul  6  2018 SRR2584863_2.trim.sub.fastq
+        -rw-rw----+ 1 murray.cadzow nesi02659 55M Jul  6  2018 SRR2584866_1.trim.sub.fastq
+        -rw-rw----+ 1 murray.cadzow nesi02659 57M Jul  6  2018 SRR2584866_2.trim.sub.fastq
+        -rw-rw----+ 1 murray.cadzow nesi02659 58M Jul  6  2018 SRR2589044_1.trim.sub.fastq
+        -rw-rw----+ 1 murray.cadzow nesi02659 53M Jul  6  2018 SRR2589044_2.trim.sub.fastq
         ```
 
 <br>
@@ -50,7 +49,7 @@ demo_workflow/
 
 We will create and run our workflow from the `workflow` directory send all of our file outputs/results to the `results` directory
 
-*Read up on the best practice workflow structure [here](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#distribution-and-reproducibility)*
+_Read up on the best practice workflow structure [here](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#distribution-and-reproducibility)_
 
 Create this file structure and our main Snakefile with:
 
@@ -72,13 +71,14 @@ Now you should have the very beginnings of your Snakemake workflow in a `demo_wo
     ```
 
     ??? success "output"
-    
-    
+
+
         ```bash
         total 1.0K
         drwxrws---+ 2 lkemp nesi99991 4.0K May 11 12:07 results
         drwxrws---+ 2 lkemp nesi99991 4.0K May 11 12:07 workflow
         ```
+
 <br>
 !!! terminal "code"
 
@@ -87,10 +87,10 @@ Now you should have the very beginnings of your Snakemake workflow in a `demo_wo
     ```
 
     ??? success "output"
-    
+
         ```bash
         total 0
-        -rw-rw----+ 1 lkemp nesi99991 0 May 11 12:07 Snakefile
+        -rw-rw----+ 1 murray.cadzow nesi02659 0 May 11 12:07 Snakefile
         ```
 
 <br>
@@ -105,26 +105,26 @@ First lets run the first step in our workflow ([fastqc](https://www.bioinformati
 
     - First make sure to have [fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) available. On NeSI, load the corresponding module
     ```bash
-    module load FastQC/0.11.9
+    module load FastQC/0.12.1
     ```
-    
+
     - See what parameters are available so we know how we want to run this software before we put it in a Snakemake workflow
     ```bash
     fastqc --help
     ```
-    
+
     - Create a test directory to put the output files
     ```bash
     mkdir fastqc_test
     ```
-    
+
     Run fastqc directly on the command line on one of the samples
     ```bash
     fastqc ./data/NA24631_1.fastq.gz ./data/NA24631_2.fastq.gz -o ./fastqc_test -t 2
     ```
-    
+
     ??? success "output"
-    
+
         ```bash
         Started analysis of NA24631_1.fastq.gz
         Approx 5% complete for NA24631_1.fastq.gz
@@ -169,14 +169,14 @@ First lets run the first step in our workflow ([fastqc](https://www.bioinformati
         Approx 95% complete for NA24631_2.fastq.gz
         Analysis complete for NA24631_2.fastq.gz
         ```
-    
+
     <br>
-    
+
     - What are the output files of fastqc? Find out with:
     ```bash
     ls -lh ./fastqc_test
     ```
-    
+
     ??? success "output"
 
         ```bash
@@ -186,7 +186,7 @@ First lets run the first step in our workflow ([fastqc](https://www.bioinformati
         -rw-rw----+ 1 lkemp nesi99991 726K May 11 12:08 NA24631_2_fastqc.html
         -rw-rw----+ 1 lkemp nesi99991 479K May 11 12:08 NA24631_2_fastqc.zip
         ```
-    
+
 <br>
 
 ## 3.04 Create the first rule in your workflow
@@ -197,7 +197,7 @@ First lets run the first step in our workflow ([fastqc](https://www.bioinformati
     # target OUTPUT files for the whole workflow
     rule all:
         input:
-    
+
     # workflow
     rule my_rule:
         input:
@@ -220,33 +220,39 @@ First lets run the first step in our workflow ([fastqc](https://www.bioinformati
 
 ---
 
-The use of the word `input` in `rule all` can be confusing, but in this context, it is referring to the final *output* files of the whole workflow
+The use of the word `input` in `rule all` can be confusing, but in this context, it is referring to the final _output_ files of the whole workflow
 
 ---
-??? code-compare "Edit snakefile"
-    ```diff
-    # target OUTPUT files for the whole workflow
-    rule all:
-        input:
-    +       "../results/fastqc/NA24631_1_fastqc.html",
-    +       "../results/fastqc/NA24631_2_fastqc.html",
-    +       "../results/fastqc/NA24631_1_fastqc.zip",
-    +       "../results/fastqc/NA24631_2_fastqc.zip"
-    
-    # workflow
-    - rule my_rule:
-    + rule fastqc:
-        input:
-    +       R1 = "../../data/NA24631_1.fastq.gz",
-    +       R2 = "../../data/NA24631_2.fastq.gz"
-        output:
-    +       html = ["../results/fastqc/NA24631_1_fastqc.html", "../results/fastqc/NA24631_2_fastqc.html"],
-    +       zip = ["../results/fastqc/NA24631_1_fastqc.zip", "../results/fastqc/NA24631_2_fastqc.zip"]
-    +   threads: 2
-        shell:
-    +       "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads}"
-    ```
 
+??? code-compare "Edit snakefile"
+
+````diff # target OUTPUT files for the whole workflow
+# target OUTPUT files for the whole workflow
+rule all:
+    input:
+    +    "../results/fastqc/SRR2584863_1.trim.sub_fastqc.html",
+    +    "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html",
+    +    "../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip",
+    +    "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"
+
+
+
+# workflow
+rule fastqc:
+    input:
+    +    R1 = "../../data/trimmed_fastq_small/SRR2584863_1.trim.sub.fastq",
+    +   R2 = "../../data/trimmed_fastq_small/SRR2584863_2.trim.sub.fastq"
+    output:
+    -   ""
+    +    html = ["../results/fastqc/SRR2584863_1.trim.sub_fastqc.html", "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html"],
+    +   zip = ["../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip", "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"]
+    +log:
+    +    "logs/fastqc/SRR2584863.log"
+    threads: 2
+    shell:
+    -   ""
+    +    "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
+    ```
 
 ??? file-code "Current snakefile:"
 
@@ -258,7 +264,7 @@ The use of the word `input` in `rule all` can be confusing, but in this context,
             "../results/fastqc/NA24631_2_fastqc.html",
             "../results/fastqc/NA24631_1_fastqc.zip",
             "../results/fastqc/NA24631_2_fastqc.zip"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -271,7 +277,6 @@ The use of the word `input` in `rule all` can be confusing, but in this context,
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads}"
     ```
-
 
 <br>
 
@@ -290,7 +295,7 @@ Let's test the workflow! First we need to be in the `workflow` directory, where 
 
 ## 3.05 Dryrun
 
-Then let's carry out a dryrun of the workflow, where no actual analysis is undertaken (fastqc is *not* run) but the overall Snakemake structure is run/validated. This is a good way to check for errors in your Snakemake workflow before actually running your workflow.
+Then let's carry out a dryrun of the workflow, where no actual analysis is undertaken (fastqc is _not_ run) but the overall Snakemake structure is run/validated. This is a good way to check for errors in your Snakemake workflow before actually running your workflow.
 
 !!! terminal "code"
 
@@ -308,33 +313,31 @@ Then let's carry out a dryrun of the workflow, where no actual analysis is under
         all           1              1              1
         fastqc        1              1              1
         total         2              1              1
-        
-        
+
+
         [Wed May 11 12:09:56 2022]
         rule fastqc:
             input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
             output: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
             jobid: 1
             resources: tmpdir=/dev/shm/jobs/26763281
-        
-        
+
+
         [Wed May 11 12:09:56 2022]
         localrule all:
             input: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
             jobid: 0
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Job stats:
         job       count    min threads    max threads
         ------  -------  -------------  -------------
         all           1              1              1
         fastqc        1              1              1
         total         2              1              1
-        
+
         This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
         ```
-
-
 
 <br>
 
@@ -358,7 +361,7 @@ We can also visualise our workflow by creating a [directed acyclic graph](https:
 
 Our diagram has a node for each job which are connected by edges representing dependencies
 
-*Note. this diagram can be output to several other image formats such as svg or pdf*
+_Note. this diagram can be output to several other image formats such as svg or pdf_
 
 ## 3.07 Fullrun
 
@@ -383,9 +386,9 @@ Let's do a full run of our workflow (by removing the `--dryrun` flag). We will a
         all           1              1              1
         fastqc        1              2              2
         total         2              1              2
-        
+
         Select jobs to execute...
-        
+
         [Wed May 11 12:10:44 2022]
         rule fastqc:
             input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
@@ -393,7 +396,7 @@ Let's do a full run of our workflow (by removing the `--dryrun` flag). We will a
             jobid: 1
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Started analysis of NA24631_1.fastq.gz
         Approx 5% complete for NA24631_1.fastq.gz
         Approx 10% complete for NA24631_1.fastq.gz
@@ -440,28 +443,27 @@ Let's do a full run of our workflow (by removing the `--dryrun` flag). We will a
         Finished job 1.
         1 of 2 steps (50%) done
         Select jobs to execute...
-        
+
         [Wed May 11 12:10:48 2022]
         localrule all:
             input: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
             jobid: 0
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         [Wed May 11 12:10:48 2022]
         Finished job 0.
         2 of 2 steps (100%) done
         Complete log: .snakemake/log/2022-05-11T121044.745212.snakemake.log
         ```
 
-
 <br>
 
 It worked! Now in our results directory we have our output files from fastqc. Let's have a look:
 
 !!! terminal "code"
-    ```bash
+`bash
     ls -lh ../results/fastqc/
-    ```
+    `
 
     ??? success "output"
         ```bash
@@ -471,8 +473,6 @@ It worked! Now in our results directory we have our output files from fastqc. Le
         -rw-rw----+ 1 lkemp nesi99991 726K May 11 12:10 NA24631_2_fastqc.html
         -rw-rw----+ 1 lkemp nesi99991 479K May 11 12:10 NA24631_2_fastqc.zip
         ```
-
-
 
 {% include exercise.html title="e3dot10" content=e3dot10%}
 <br>
@@ -488,12 +488,11 @@ What happens if we try a dryrun or full run now?
     ```
 
     !!! success "output"
-    
+
         ```bash
         Building DAG of jobs...
         Nothing to be done (all requested files are present and up to date).
         ```
-
 
 <br>
 
@@ -502,9 +501,9 @@ What happens if we try a dryrun or full run now?
     ```bash
     snakemake --cores 2
     ```
-    
+
     ??? success "output"
-    
+
         ```bash
         Building DAG of jobs...
         Nothing to be done (all requested files are present and up to date).
@@ -524,9 +523,8 @@ Also, what happens if we create another directed acyclic graph (DAG) after the w
     ```
 
     ??? image "DAG"
-    
-        <center>![DAG_2](./images/dag_2.png)</center>
 
+        <center>![DAG_2](./images/dag_2.png)</center>
 
 <br>
 
@@ -548,7 +546,7 @@ fastqc worked because we loaded it in our current shell session. Let's specify t
             "../results/fastqc/NA24631_2_fastqc.html",
             "../results/fastqc/NA24631_1_fastqc.zip",
             "../results/fastqc/NA24631_2_fastqc.zip"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -564,8 +562,6 @@ fastqc worked because we loaded it in our current shell session. Let's specify t
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads}"
     ```
 
-
-
 ??? file-code "Current snakefile:"
 
     ```python
@@ -576,7 +572,7 @@ fastqc worked because we loaded it in our current shell session. Let's specify t
             "../results/fastqc/NA24631_2_fastqc.html",
             "../results/fastqc/NA24631_1_fastqc.zip",
             "../results/fastqc/NA24631_2_fastqc.zip"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -591,6 +587,7 @@ fastqc worked because we loaded it in our current shell session. Let's specify t
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads}"
     ```
+
 <br>
 
 Run again, now telling Snakemake to use [environment modules](https://nesi.github.io/hpc-intro/14-modules/index.html) to automatically load our software by using the `--use-envmodules` flag
@@ -600,7 +597,7 @@ Run again, now telling Snakemake to use [environment modules](https://nesi.githu
     ```diff
     # first remove output of last run
     rm -r ../results/*
-    
+
     # Run dryrun again
     - snakemake --dryrun --cores 2
     + snakemake --dryrun --cores 2 --use-envmodules
@@ -616,8 +613,8 @@ Run again, now telling Snakemake to use [environment modules](https://nesi.githu
         all           1              1              1
         fastqc        1              2              2
         total         2              1              2
-        
-        
+
+
         [Wed May 11 12:13:52 2022]
         rule fastqc:
             input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
@@ -625,34 +622,31 @@ Run again, now telling Snakemake to use [environment modules](https://nesi.githu
             jobid: 1
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
-        
+
+
         [Wed May 11 12:13:52 2022]
         localrule all:
             input: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
             jobid: 0
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Job stats:
         job       count    min threads    max threads
         ------  -------  -------------  -------------
         all           1              1              1
         fastqc        1              2              2
         total         2              1              2
-        
+
         This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
         ```
-
-
-
 
 <br>
 
 !!! terminal-2 "Let's do a full run"
-    ```diff
+`diff
     - snakemake --cores 2
     + snakemake --cores 2 --use-envmodules
-    ```
+    `
 
     ??? success "output"
 
@@ -667,9 +661,9 @@ Run again, now telling Snakemake to use [environment modules](https://nesi.githu
         all           1              1              1
         fastqc        1              2              2
         total         2              1              2
-        
+
         Select jobs to execute...
-        
+
         [Wed May 11 12:14:22 2022]
         rule fastqc:
             input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
@@ -677,12 +671,12 @@ Run again, now telling Snakemake to use [environment modules](https://nesi.githu
             jobid: 1
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Activating environment modules: FastQC/0.11.9
-        
+
         The following modules were not unloaded:
            (Use "module --force purge" to unload all):
-        
+
           1) XALT/minimal   2) slurm   3) NeSI
         Started analysis of NA24631_1.fastq.gz
         Approx 5% complete for NA24631_1.fastq.gz
@@ -730,19 +724,18 @@ Run again, now telling Snakemake to use [environment modules](https://nesi.githu
         Finished job 1.
         1 of 2 steps (50%) done
         Select jobs to execute...
-        
+
         [Wed May 11 12:14:26 2022]
         localrule all:
             input: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
             jobid: 0
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         [Wed May 11 12:14:26 2022]
         Finished job 0.
         2 of 2 steps (100%) done
         Complete log: .snakemake/log/2022-05-11T121422.744466.snakemake.log
         ```
-
 
 <br>
 
@@ -757,7 +750,7 @@ So far our logs (for fastqc) have been simply printed to our screen. As you can 
     - It's a good idea to organise the logs by:
       - Putting the logs in a directory labelled after the rule/software that was run
       - Labelling the log files with the sample name the software was run on
-    
+
     - Also make sure you tell the software (fastqc) to write the standard output and standard error to this log file we defined in the `log:` directive in the shell script (eg. `&> {log}`)
 
 ??? code-compare "Edit snakefile"
@@ -770,7 +763,7 @@ So far our logs (for fastqc) have been simply printed to our screen. As you can 
             "../results/fastqc/NA24631_2_fastqc.html",
             "../results/fastqc/NA24631_1_fastqc.zip",
             "../results/fastqc/NA24631_2_fastqc.zip"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -799,7 +792,7 @@ So far our logs (for fastqc) have been simply printed to our screen. As you can 
             "../results/fastqc/NA24631_2_fastqc.html",
             "../results/fastqc/NA24631_1_fastqc.zip",
             "../results/fastqc/NA24631_2_fastqc.zip"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -830,11 +823,11 @@ A tangent about [standard streams](https://en.wikipedia.org/wiki/Standard_stream
 
 Different ways to write log files:
 
-|  Syntax  | standard output in terminal | standard error in terminal | standard output in file | standard error in file |
-|----------|-----------------------------|----------------------------|-------------------------|------------------------|
-|   `>`    |  NO                         | YES                        | YES                     | NO                     |
-|   `2>`   |  YES                        | NO                         | NO                      | YES                    |
-|   `&>`   |  NO                         | NO                         | YES                     | YES                    |
+| Syntax | standard output in terminal | standard error in terminal | standard output in file | standard error in file |
+| ------ | --------------------------- | -------------------------- | ----------------------- | ---------------------- |
+| `>`    | NO                          | YES                        | YES                     | NO                     |
+| `2>`   | YES                         | NO                         | NO                      | YES                    |
+| `&>`   | NO                          | NO                         | YES                     | YES                    |
 
 (Table adapted from [here](https://askubuntu.com/questions/420981/how-do-i-save-terminal-output-to-a-file))
 
@@ -865,9 +858,9 @@ Different ways to write log files:
         all           1              1              1
         fastqc        1              2              2
         total         2              1              2
-        
+
         Select jobs to execute...
-        
+
         [Wed May 11 12:15:16 2022]
         rule fastqc:
             input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
@@ -876,24 +869,24 @@ Different ways to write log files:
             jobid: 1
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Activating environment modules: FastQC/0.11.9
-        
+
         The following modules were not unloaded:
            (Use "module --force purge" to unload all):
-        
+
           1) XALT/minimal   2) slurm   3) NeSI
         [Wed May 11 12:15:20 2022]
         Finished job 1.
         1 of 2 steps (50%) done
         Select jobs to execute...
-        
+
         [Wed May 11 12:15:20 2022]
         localrule all:
             input: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
             jobid: 0
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         [Wed May 11 12:15:20 2022]
         Finished job 0.
         2 of 2 steps (100%) done
@@ -923,7 +916,6 @@ Different ways to write log files:
         Approx 45% complete for NA24631_1.fastq.gz
         ```
 
-
 <br>
 
 <p align="center"><b>We have logs. Tidy logs.</b><br></p>
@@ -950,7 +942,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
     ```diff
     # define samples from data directory using wildcards
     + SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
@@ -962,7 +954,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
     +       expand("../results/fastqc/{sample}_2_fastqc.html", sample = SAMPLES),
     +       expand("../results/fastqc/{sample}_1_fastqc.zip", sample = SAMPLES),
     +       expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES)
-    
+
     # workflow
     rule fastqc:
         input:
@@ -990,7 +982,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
     ```python
     # define samples from data directory using wildcards
     SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
@@ -998,7 +990,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
             expand("../results/fastqc/{sample}_2_fastqc.html", sample = SAMPLES),
             expand("../results/fastqc/{sample}_1_fastqc.zip", sample = SAMPLES),
             expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES)
-    
+
     # workflow
     rule fastqc:
         input:
@@ -1016,9 +1008,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
     ```
 
-
 <br>
-
 
 !!! terminal-2 "Visualise workflow"
 
@@ -1057,8 +1047,8 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
         all           1              1              1
         fastqc        3              2              2
         total         4              1              2
-        
-        
+
+
         [Wed May 11 12:16:46 2022]
         rule fastqc:
             input: ../../data/NA24695_1.fastq.gz, ../../data/NA24695_2.fastq.gz
@@ -1068,8 +1058,8 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
             wildcards: sample=NA24695
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
-        
+
+
         [Wed May 11 12:16:46 2022]
         rule fastqc:
             input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
@@ -1079,8 +1069,8 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
             wildcards: sample=NA24631
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
-        
+
+
         [Wed May 11 12:16:46 2022]
         rule fastqc:
             input: ../../data/NA24694_1.fastq.gz, ../../data/NA24694_2.fastq.gz
@@ -1090,24 +1080,23 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
             wildcards: sample=NA24694
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
-        
+
+
         [Wed May 11 12:16:46 2022]
         localrule all:
             input: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24695_1_fastqc.html, ../results/fastqc/NA24694_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24695_2_fastqc.html, ../results/fastqc/NA24694_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24695_1_fastqc.zip, ../results/fastqc/NA24694_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip, ../results/fastqc/NA24695_2_fastqc.zip, ../results/fastqc/NA24694_2_fastqc.zip
             jobid: 0
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Job stats:
         job       count    min threads    max threads
         ------  -------  -------------  -------------
         all           1              1              1
         fastqc        3              2              2
         total         4              1              2
-        
+
         This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
         ```
-
 
 <br>
 
@@ -1131,6 +1120,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
         -rw-rw----+ 1 lkemp nesi99991 1.8K May 11 12:17 NA24694.log
         -rw-rw----+ 1 lkemp nesi99991 1.8K May 11 12:17 NA24695.log
         ```
+
 <br>
 
 ## 3.12 Add more rules
@@ -1143,7 +1133,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
     ```diff
     # define samples from data directory using wildcards
     SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
@@ -1153,7 +1143,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
     -       expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES)
     +       expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES),
     +       "../results/multiqc_report.html"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -1169,7 +1159,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     + rule multiqc:
     +   input:
     +       expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
@@ -1185,11 +1175,10 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
 
 ??? file-code "Current snakefile:"
 
-
     ```python
     # define samples from data directory using wildcards
     SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
@@ -1198,7 +1187,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
             expand("../results/fastqc/{sample}_1_fastqc.zip", sample = SAMPLES),
             expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES),
             "../results/multiqc_report.html"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -1214,7 +1203,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     rule multiqc:
         input:
             expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
@@ -1227,7 +1216,6 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
         shell:
             "multiqc {input} -o ../results/ &> {log}"
     ```
-
 
 <br>
 
@@ -1254,8 +1242,6 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
 
         ![DAG_4](./images/dag_4.png)
 
-
-
 <br>
 
 ## 3.13 More about Snakemake's lazy behaviour
@@ -1263,11 +1249,11 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
 What happens if we only have the final target file (`../results/multiqc_report.html`) in `rule all:`
 
 ??? code-compare "Edit snakefile"
-    
+
     ```diff
     # define samples from data directory using wildcards
     SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
@@ -1276,7 +1262,7 @@ What happens if we only have the final target file (`../results/multiqc_report.h
     -       expand("../results/fastqc/{sample}_1_fastqc.zip", sample = SAMPLES),
     -       expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES),
             "../results/multiqc_report.html"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -1292,7 +1278,7 @@ What happens if we only have the final target file (`../results/multiqc_report.h
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     rule multiqc:
         input:
             expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
@@ -1307,15 +1293,14 @@ What happens if we only have the final target file (`../results/multiqc_report.h
     ```
 
 ??? file-code "Current snakefile:"
-    ```python
-    # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+```python # define samples from data directory using wildcards
+SAMPLES, = glob_wildcards("../../data/{sample}\_1.fastq.gz")
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -1331,7 +1316,7 @@ What happens if we only have the final target file (`../results/multiqc_report.h
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     rule multiqc:
         input:
             expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
@@ -1368,9 +1353,8 @@ What happens if we only have the final target file (`../results/multiqc_report.h
     - Although the workflow ran the same, the DAG actually changed slightly, now there is only one file target and only the output of multiqc goes to `rule all`
 
     ??? image "DAG"
-    
-        ![DAG_5](./images/dag_5.png)
 
+        ![DAG_5](./images/dag_5.png)
 
 <br>
 
@@ -1383,7 +1367,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
     ```diff
     # define samples from data directory using wildcards
     SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
@@ -1392,7 +1376,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
     +       expand("../results/fastqc/{sample}_1_fastqc.zip", sample = SAMPLES),
     +       expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES)
     -       "../results/multiqc_report.html"
-    
+
     # workflow
     rule fastqc:
         input:
@@ -1408,7 +1392,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     rule multiqc:
         input:
             expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
@@ -1427,7 +1411,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
     ```python
     # define samples from data directory using wildcards
     SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
@@ -1435,7 +1419,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
             expand("../results/fastqc/{sample}_2_fastqc.html", sample = SAMPLES),
             expand("../results/fastqc/{sample}_1_fastqc.zip", sample = SAMPLES),
             expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES)
-    
+
     # workflow
     rule fastqc:
         input:
@@ -1451,7 +1435,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     rule multiqc:
         input:
             expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
@@ -1464,7 +1448,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
         shell:
             "multiqc {input} -o ../results/ &> {log}"
     ```
-    
+
 <br>
 
 !!! terminal-2 "Run again"
@@ -1475,7 +1459,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
     ```
 
     !!! success "My partial output:"
-    
+
         ```bash
         Job stats:
         job       count    min threads    max threads
@@ -1484,10 +1468,10 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
         fastqc        3              2              2
         total         4              1              2
         ```
+
 <br>
 
 !!! terminal-2 "Our multiqc rule won't be run/evaluated : Visualise workflow"
-
 
     ```bash
     snakemake --dag | dot -Tpng > dag_6.png
@@ -1514,11 +1498,11 @@ Let's add the rest of the rules. We want to get to:
 We currently have fastqc and multiqc, so we still need to add trim_galore
 
 ??? code-compare "Edit snakefile"
-    
+
     ```diff
     # define samples from data directory using wildcards
     SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
@@ -1528,7 +1512,7 @@ We currently have fastqc and multiqc, so we still need to add trim_galore
     -       expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES)
     +       "../results/multiqc_report.html",
     +       expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
-    
+
     # workflow
     rule fastqc:
         input:
@@ -1544,7 +1528,7 @@ We currently have fastqc and multiqc, so we still need to add trim_galore
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     rule multiqc:
         input:
             expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
@@ -1556,7 +1540,7 @@ We currently have fastqc and multiqc, so we still need to add trim_galore
             "MultiQC/1.9-gimkl-2020a-Python-3.8.2"
         shell:
             "multiqc {input} -o ../results/ &> {log}"
-    
+
     + rule trim_galore:
     +   input:
     +       ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
@@ -1576,13 +1560,13 @@ We currently have fastqc and multiqc, so we still need to add trim_galore
     ```python
     # define samples from data directory using wildcards
     SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
             expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
-    
+
     # workflow
     rule fastqc:
         input:
@@ -1598,7 +1582,7 @@ We currently have fastqc and multiqc, so we still need to add trim_galore
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     rule multiqc:
         input:
             expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
@@ -1610,7 +1594,7 @@ We currently have fastqc and multiqc, so we still need to add trim_galore
             "MultiQC/1.9-gimkl-2020a-Python-3.8.2"
         shell:
             "multiqc {input} -o ../results/ &> {log}"
-    
+
     rule trim_galore:
         input:
             ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
@@ -1632,11 +1616,11 @@ We currently have fastqc and multiqc, so we still need to add trim_galore
     ```bash
     snakemake --dag | dot -Tpng > dag_7.png
     ```
-    
+
     Fantastic, we are starting to build a workflow!
 
     ??? image "DAG:"
-    
+
         ![DAG_7](./images/dag_7.png)
 
 <br>
@@ -1650,7 +1634,7 @@ However, when analysing many samples, our DAG can become messy and complicated. 
     ```
 
     !!! image "My rulegraph:"
-    
+
         ![rulegraph_1](./images/rulegraph_1.png)
 
 <br>
@@ -1662,10 +1646,8 @@ However, when analysing many samples, our DAG can become messy and complicated. 
     ```
 
     ??? image "My filegraph:"
-    
+
         ![filegraph](./images/filegraph.png)
-
-
 
 <br>
 
@@ -1697,7 +1679,7 @@ Run again allowing Snakemake to use more cores overall `--cores 4` rather than `
     snakemake --cores 4 --use-envmodules
     ```
 
-Notice the whole workflow ran much faster and several samples/files/rules were running at one time. This is because we set each rule to run with 2 threads. Initially we specified that the *maximum* number of cores to be used by the workflow was 2 with the `--cores 2` flag, meaning only one rule and sample can be run at one time. When we increased the *maximum* number of cores to be used by the workflow to 4 with `--cores 4`, up to 2 samples could be run through at one time.
+Notice the whole workflow ran much faster and several samples/files/rules were running at one time. This is because we set each rule to run with 2 threads. Initially we specified that the _maximum_ number of cores to be used by the workflow was 2 with the `--cores 2` flag, meaning only one rule and sample can be run at one time. When we increased the _maximum_ number of cores to be used by the workflow to 4 with `--cores 4`, up to 2 samples could be run through at one time.
 
 ## 3.16 Throw it even more cores
 
@@ -1706,7 +1688,6 @@ With a high performance cluster such as [NeSi](https://www.nesi.org.nz/), you ca
 <p align="center"><b>Boom! Scalability here we come!</b><br></p>
 
 <center>![image](./nesi_images/mahuika_maui_real.png){width="800"}</center>
-
 
 To run the workflow on the cluster, we need to ensure that each step is run as a dedicated job in the queuing system of the HPC. On NeSI, the queuing system is managed by [Slurm](https://slurm.schedmd.com/documentation.html).
 
@@ -1726,7 +1707,7 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
     ```
 
     ??? success "output"
-    
+
         ```bash
         Building DAG of jobs...
         Using shell: /usr/bin/bash
@@ -1740,9 +1721,9 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
         multiqc            1              1              1
         trim_galore        3              2              2
         total              8              1              2
-        
+
         Select jobs to execute...
-        
+
         [Wed May 11 12:26:39 2022]
         rule fastqc:
             input: ../../data/NA24694_1.fastq.gz, ../../data/NA24694_2.fastq.gz
@@ -1752,9 +1733,9 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
             wildcards: sample=NA24694
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Activating environment modules: FastQC/0.11.9
-        
+
         [Wed May 11 12:26:39 2022]
         rule trim_galore:
             input: ../../data/NA24694_1.fastq.gz, ../../data/NA24694_2.fastq.gz
@@ -1764,23 +1745,23 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
             wildcards: sample=NA24694
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Activating environment modules: TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1
-        
+
         The following modules were not unloaded:
            (Use "module --force purge" to unload all):
-        
+
           1) XALT/minimal   2) slurm   3) NeSI
-        
+
         The following modules were not unloaded:
            (Use "module --force purge" to unload all):
-        
+
           1) XALT/minimal   2) slurm   3) NeSI
         [Wed May 11 12:26:44 2022]
         Finished job 4.
         1 of 8 steps (12%) done
         Select jobs to execute...
-        
+
         [Wed May 11 12:26:44 2022]
         rule fastqc:
             input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
@@ -1790,18 +1771,18 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
             wildcards: sample=NA24631
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Activating environment modules: FastQC/0.11.9
-        
+
         The following modules were not unloaded:
            (Use "module --force purge" to unload all):
-        
+
           1) XALT/minimal   2) slurm   3) NeSI
         [Wed May 11 12:26:47 2022]
         Finished job 7.
         2 of 8 steps (25%) done
         Select jobs to execute...
-        
+
         [Wed May 11 12:26:47 2022]
         rule trim_galore:
             input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
@@ -1811,18 +1792,18 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
             wildcards: sample=NA24631
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Activating environment modules: TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1
-        
+
         The following modules were not unloaded:
            (Use "module --force purge" to unload all):
-        
+
           1) XALT/minimal   2) slurm   3) NeSI
         [Wed May 11 12:26:50 2022]
         Finished job 2.
         3 of 8 steps (38%) done
         Select jobs to execute...
-        
+
         [Wed May 11 12:26:50 2022]
         rule fastqc:
             input: ../../data/NA24695_1.fastq.gz, ../../data/NA24695_2.fastq.gz
@@ -1832,18 +1813,18 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
             wildcards: sample=NA24695
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Activating environment modules: FastQC/0.11.9
-        
+
         The following modules were not unloaded:
            (Use "module --force purge" to unload all):
-        
+
           1) XALT/minimal   2) slurm   3) NeSI
         [Wed May 11 12:26:54 2022]
         Finished job 3.
         4 of 8 steps (50%) done
         Select jobs to execute...
-        
+
         [Wed May 11 12:26:54 2022]
         rule trim_galore:
             input: ../../data/NA24695_1.fastq.gz, ../../data/NA24695_2.fastq.gz
@@ -1853,18 +1834,18 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
             wildcards: sample=NA24695
             threads: 2
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Activating environment modules: TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1
-        
+
         The following modules were not unloaded:
            (Use "module --force purge" to unload all):
-        
+
           1) XALT/minimal   2) slurm   3) NeSI
         [Wed May 11 12:26:56 2022]
         Finished job 5.
         5 of 8 steps (62%) done
         Select jobs to execute...
-        
+
         [Wed May 11 12:26:56 2022]
         rule multiqc:
             input: ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24695_1_fastqc.zip, ../results/fastqc/NA24694_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip, ../results/fastqc/NA24695_2_fastqc.zip, ../results/fastqc/NA24694_2_fastqc.zip
@@ -1872,12 +1853,12 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
             log: logs/multiqc/multiqc.log
             jobid: 1
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         Activating environment modules: MultiQC/1.9-gimkl-2020a-Python-3.8.2
-        
+
         The following modules were not unloaded:
            (Use "module --force purge" to unload all):
-        
+
           1) XALT/minimal   2) slurm   3) NeSI
         [Wed May 11 12:27:01 2022]
         Finished job 6.
@@ -1886,13 +1867,13 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
         Finished job 1.
         7 of 8 steps (88%) done
         Select jobs to execute...
-        
+
         [Wed May 11 12:27:03 2022]
         localrule all:
             input: ../results/multiqc_report.html, ../results/trimmed/NA24631_1_val_1.fq.gz, ../results/trimmed/NA24695_1_val_1.fq.gz, ../results/trimmed/NA24694_1_val_1.fq.gz, ../results/trimmed/NA24631_2_val_2.fq.gz, ../results/trimmed/NA24695_2_val_2.fq.gz, ../results/trimmed/NA24694_2_val_2.fq.gz
             jobid: 0
             resources: tmpdir=/dev/shm/jobs/26763281
-        
+
         [Wed May 11 12:27:03 2022]
         Finished job 0.
         8 of 8 steps (100%) done
@@ -1910,17 +1891,17 @@ If you open another terminal on the HPC, you can use the `squeue` command to lis
     ```
 
     ??? success "output"
-    
-    
+
+
         ```bash
-        JOBID         USER     ACCOUNT   NAME        CPUS MIN_MEM PARTITI START_TIME     TIME_LEFT STATE    NODELIST(REASON)    
-        26763281      lkemp    nesi99991 spawner-jupy   4      4G interac 2022-05-11T1     7:30:33 RUNNING  wbn003              
-        26763418      lkemp    nesi99991 snakejob.fas   8    512M large   2022-05-11T1        9:59 RUNNING  wbn096              
-        26763419      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn096              
-        26763420      lkemp    nesi99991 snakejob.fas   8    512M large   2022-05-11T1        9:59 RUNNING  wbn110              
-        26763421      lkemp    nesi99991 snakejob.fas   8    512M large   2022-05-11T1        9:59 RUNNING  wbn069              
-        26763422      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn070              
-        26763423      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn090  
+        JOBID         USER     ACCOUNT   NAME        CPUS MIN_MEM PARTITI START_TIME     TIME_LEFT STATE    NODELIST(REASON)
+        26763281      lkemp    nesi99991 spawner-jupy   4      4G interac 2022-05-11T1     7:30:33 RUNNING  wbn003
+        26763418      lkemp    nesi99991 snakejob.fas   8    512M large   2022-05-11T1        9:59 RUNNING  wbn096
+        26763419      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn096
+        26763420      lkemp    nesi99991 snakejob.fas   8    512M large   2022-05-11T1        9:59 RUNNING  wbn110
+        26763421      lkemp    nesi99991 snakejob.fas   8    512M large   2022-05-11T1        9:59 RUNNING  wbn069
+        26763422      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn070
+        26763423      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn090
         ```
 
 <br>
@@ -1936,10 +1917,10 @@ Here we will use it to see your jobs gets queued and executed in real time:
 
 You can exit the view create by `watch` by pressing CTRL+C.
 
-
 # Takeaways
 
 ---
+
 !!! quote ""
 
     - Once familiar with environment modules, the software are very straightforward to integrate in your snakemake workflow
@@ -1967,67 +1948,67 @@ You can exit the view create by `watch` by pressing CTRL+C.
 !!! terminal "code"
 
     - Create a directed acyclic graph (DAG) with:
-    
+
     ```bash
     snakemake --dag | dot -Tpng > dag.png
     ```
-    
+
     - Create a rulegraph with:
-    
+
     ```bash
     snakemake --rulegraph | dot -Tpng > rulegraph.png
     ```
-    
+
     - Create a filegraph with:
-    
+
     ```bash
     snakemake --filegraph | dot -Tpng > filegraph.png
     ```
-    
+
     - Run a dryrun of your snakemake workflow with:
-    
+
     ```bash
     snakemake --dryrun
     ```
-    
+
     - Run your snakemake workflow with:
-    
+
     ```bash
     snakemake --cores 2
     ```
-    
+
     - Run a dryrun of your snakemake workflow (using environment modules to load your software) with:
-    
+
     ```bash
     snakemake --dryrun --cores 2 --use-envmodules
     ```
-    
+
     - Run your snakemake workflow (using environment modules to load your software) with:
-    
+
     ```bash
     snakemake --cores 2 --use-envmodules
     ```
-    
+
     - Run your snakemake workflow using multiple jobs on NeSI:
-    
+
     ```bash
     snakemake --cluster "sbatch --time 00:10:00 --mem=512MB --cpus-per-task 8" --jobs 10 --use-envmodules
     ```
-    
+
     - Create a global wildcard to get process all your samples in a directory with:
-    
+
     ```bash
     SAMPLES, = glob_wildcards("../relative/path/to/samples/{sample}_1.fastq.gz")
     ```
-    
+
     - Combine this with the expand function to tell Snakemake to look at your global wildcard to figure out what you refer to as `{sample}` in your workflow
-    
+
     ```bash
     expand("../results/{sample}_1.fastq.gz", sample = SAMPLES)
     ```
-    
+
     - Increase the number of samples that can be analysed at one time in your workflow by increasing the maximum number of cores to be used at one time with the `--cores` command
-    
+
     ```bash
     snakemake --cores 4 --use-envmodules
     ```
@@ -2036,6 +2017,7 @@ You can exit the view create by `watch` by pressing CTRL+C.
 
 See [basic_demo_workflow](https://github.com/nesi/snakemake_workshop/tree/main/basic_demo_workflow) for the final Snakemake workflow we've created up to this point
 
-- - - 
+---
 
 <p align="center"><b><a class="btn" href="https://nesi.github.io/snakemake_workshop/" style="background: var(--bs-dark);font-weight:bold">Back to homepage</a></b></p>
+````
