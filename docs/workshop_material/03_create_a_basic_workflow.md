@@ -226,14 +226,14 @@ The use of the word `input` in `rule all` can be confusing, but in this context,
 
 ??? code-compare "Edit snakefile"
 
-````diff # target OUTPUT files for the whole workflow
+    ```diff # target OUTPUT files for the whole workflow
     # target OUTPUT files for the whole workflow
     rule all:
         input:
-        +    "../results/fastqc/SRR2584863_1.trim.sub_fastqc.html",
-        +    "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html",
-        +    "../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip",
-        +    "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"
+    +       "../results/fastqc/SRR2584863_1.trim.sub_fastqc.html",
+    +       "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html",
+    +       "../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip",
+    +       "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"
 
 
 
@@ -1292,7 +1292,8 @@ What happens if we only have the final target file (`../results/multiqc_report.h
     ```
 
 ??? file-code "Current snakefile:"
-```python # define samples from data directory using wildcards
+
+````python # define samples from data directory using wildcards
 SAMPLES, = glob_wildcards("../../data/{sample}\_1.fastq.gz")
 
     # target OUTPUT files for the whole workflow
