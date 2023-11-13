@@ -227,31 +227,30 @@ The use of the word `input` in `rule all` can be confusing, but in this context,
 ??? code-compare "Edit snakefile"
 
 ````diff # target OUTPUT files for the whole workflow
-# target OUTPUT files for the whole workflow
-rule all:
-    input:
-    +    "../results/fastqc/SRR2584863_1.trim.sub_fastqc.html",
-    +    "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html",
-    +    "../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip",
-    +    "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"
+    # target OUTPUT files for the whole workflow
+    rule all:
+        input:
+        +    "../results/fastqc/SRR2584863_1.trim.sub_fastqc.html",
+        +    "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html",
+        +    "../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip",
+        +    "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"
 
 
 
-# workflow
-rule fastqc:
-    input:
-    +    R1 = "../../data/trimmed_fastq_small/SRR2584863_1.trim.sub.fastq",
-    +   R2 = "../../data/trimmed_fastq_small/SRR2584863_2.trim.sub.fastq"
-    output:
-    -   ""
-    +    html = ["../results/fastqc/SRR2584863_1.trim.sub_fastqc.html", "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html"],
-    +   zip = ["../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip", "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"]
-    +log:
-    +    "logs/fastqc/SRR2584863.log"
-    threads: 2
-    shell:
-    -   ""
-    +    "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
+    # workflow
+    - rule my_rule:
+    + rule fastqc:
+        input:
+    +       R1 = "../../data/trimmed_fastq_small/SRR2584863_1.trim.sub.fastq",
+    +       R2 = "../../data/trimmed_fastq_small/SRR2584863_2.trim.sub.fastq"
+        output:
+    +       html = ["../results/fastqc/SRR2584863_1.trim.sub_fastqc.html", "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html"],
+    +       zip = ["../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip", "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"]
+    +   log:
+    +       "logs/fastqc/SRR2584863.log"
+        threads: 2
+        shell:
+    +        "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
     ```
 
 ??? file-code "Current snakefile:"
