@@ -873,44 +873,46 @@ Different ways to write log files:
         Provided cores: 2
         Rules claiming more threads will be scaled down.
         Job stats:
-        job       count    min threads    max threads
-        ------  -------  -------------  -------------
-        all           1              1              1
-        fastqc        1              2              2
-        total         2              1              2
+        job       count
+        ------  -------
+        all           1
+        fastqc        1
+        total         2
 
         Select jobs to execute...
 
-        [Wed May 11 12:15:16 2022]
+        [Mon Nov 13 04:13:31 2023]
         rule fastqc:
-            input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
-            output: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
-            log: logs/fastqc/NA24631.log
+            input: ../../data/trimmed_fastq_small/SRR2584863_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2584863_2.trim.sub.fastq
+            output: ../results/fastqc/SRR2584863_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip
+            log: logs/fastqc/SRR2584863.log
             jobid: 1
+            reason: Missing output files: ../results/fastqc/SRR2584863_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip; Code has changed since last execution
             threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
+            resources: tmpdir=/dev/shm/jobs/40901556
 
-        Activating environment modules: FastQC/0.11.9
+        Activating environment modules: FastQC/0.12.1
 
         The following modules were not unloaded:
-           (Use "module --force purge" to unload all):
+        (Use "module --force purge" to unload all):
 
-          1) XALT/minimal   2) slurm   3) NeSI
-        [Wed May 11 12:15:20 2022]
+        1) XALT/minimal   2) slurm   3) NeSI
+        [Mon Nov 13 04:13:41 2023]
         Finished job 1.
         1 of 2 steps (50%) done
         Select jobs to execute...
 
-        [Wed May 11 12:15:20 2022]
+        [Mon Nov 13 04:13:41 2023]
         localrule all:
-            input: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
+            input: ../results/fastqc/SRR2584863_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip
             jobid: 0
-            resources: tmpdir=/dev/shm/jobs/26763281
+            reason: Input files updated by another job: ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip
+            resources: tmpdir=/dev/shm/jobs/40901556
 
-        [Wed May 11 12:15:20 2022]
+        [Mon Nov 13 04:13:41 2023]
         Finished job 0.
         2 of 2 steps (100%) done
-        Complete log: .snakemake/log/2022-05-11T121516.368334.snakemake.log
+        Complete log: .snakemake/log/2023-11-13T041331.085160.snakemake.log
         ```
 
 <br>
@@ -918,22 +920,19 @@ Different ways to write log files:
 !!! terminal-2 "We now have a log file, lets have a look at the first 10 lines of our log with:"
 
     ```bash
-    head ./logs/fastqc/NA24631.log
+    head ./logs/fastqc/SRR2584863.log
     ```
 
     ??? success "output"
 
         ```bash
-        Started analysis of NA24631_1.fastq.gz
-        Approx 5% complete for NA24631_1.fastq.gz
-        Approx 10% complete for NA24631_1.fastq.gz
-        Approx 15% complete for NA24631_1.fastq.gz
-        Approx 20% complete for NA24631_1.fastq.gz
-        Approx 25% complete for NA24631_1.fastq.gz
-        Approx 30% complete for NA24631_1.fastq.gz
-        Approx 35% complete for NA24631_1.fastq.gz
-        Approx 40% complete for NA24631_1.fastq.gz
-        Approx 45% complete for NA24631_1.fastq.gz
+        Started analysis of SRR2584863_1.trim.sub.fastq
+        Approx 5% complete for SRR2584863_1.trim.sub.fastq
+        Approx 10% complete for SRR2584863_1.trim.sub.fastq
+        Approx 5% complete for SRR2584863_2.trim.sub.fastq
+        Approx 15% complete for SRR2584863_1.trim.sub.fastq
+        Approx 10% complete for SRR2584863_2.trim.sub.fastq
+        Approx 20% complete for SRR2584863_1.trim.sub.fastq
         ```
 
 <br>
@@ -953,7 +952,7 @@ We are currently only analysing one of our three samples
 Let's scale up to run all of our samples by using [wildcards](https://snakemake.readthedocs.io/en/stable/snakefiles/rules.html#wildcards), this way we can grab all the samples/files in the `data` directory and analyse them
 
 - Set a global wildcard that defines the samples to be analysed
-- Generalise where this rule uses an individual sample (`NA24631`) to use this wildcard `{sample}`
+- Generalise where this rule uses an individual sample (`SRR2584863`) to use this wildcard `{sample}`
 - Use the [expand function](https://snakemake.readthedocs.io/en/stable/snakefiles/rules.html#the-expand-function) (`expand()`) function to tell snakemake that `{sample}` is what we defined in our global wildcard `SAMPLES,`
 - Snakemake can figure out what `{sample}` is in our rule since it's defined in the targets in `rule all:`
 
@@ -961,34 +960,34 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
 
     ```diff
     # define samples from data directory using wildcards
-    + SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
+    + SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
 
     # target OUTPUT files for the whole workflow
     rule all:
         input:
-    -       "../results/fastqc/NA24631_1_fastqc.html",
-    -       "../results/fastqc/NA24631_2_fastqc.html",
-    -       "../results/fastqc/NA24631_1_fastqc.zip",
-    -       "../results/fastqc/NA24631_2_fastqc.zip"
-    +       expand("../results/fastqc/{sample}_1_fastqc.html", sample = SAMPLES),
-    +       expand("../results/fastqc/{sample}_2_fastqc.html", sample = SAMPLES),
-    +       expand("../results/fastqc/{sample}_1_fastqc.zip", sample = SAMPLES),
-    +       expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES)
+    -       "../results/fastqc/SRR2584863_1.trim.sub_fastqc.html",
+    -       "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html",
+    -       "../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip",
+    -       "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"
+    +       expand("../results/fastqc/{sample}_1.trim.sub_fastqc.html", sample = SAMPLES),
+    +       expand("../results/fastqc/{sample}_2.trim.sub_fastqc.html", sample = SAMPLES),
+    +       expand("../results/fastqc/{sample}_1.trim.sub_fastqc.zip", sample = SAMPLES),
+    +       expand("../results/fastqc/{sample}_2.trim.sub_fastqc.zip", sample = SAMPLES)
 
     # workflow
     rule fastqc:
         input:
-    -       R1 = "../../data/NA24631_1.fastq.gz",
-    -       R2 = "../../data/NA24631_2.fastq.gz"
-    +       R1 = "../../data/{sample}_1.fastq.gz",
-    +       R2 = "../../data/{sample}_2.fastq.gz"
+    -       R1 = "../../data/trimmed_fastq_small/SRR2584863_1.trim.sub.fastq",
+    -       R2 = "../../data/trimmed_fastq_small/SRR2584863_2.trim.sub.fastq"
+    +       R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+    +       R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-    -       html = ["../results/fastqc/NA24631_1_fastqc.html", "../results/fastqc/NA24631_2_fastqc.html"],
-    -       zip = ["../results/fastqc/NA24631_1_fastqc.zip", "../results/fastqc/NA24631_2_fastqc.zip"]
-    +       html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-    +       zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+    -       html = ["../results/fastqc/SRR2584863_1.trim.sub_fastqc.html", "../results/fastqc/SRR2584863_2.trim.sub_fastqc.html"],
+    -       zip = ["../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip", "../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip"]
+    +       html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+    +       zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         log:
-    -       "logs/fastqc/NA24631.log"
+    -       "logs/fastqc/SRR25848631.log"
     +       "logs/fastqc/{sample}.log"
         threads: 2
         envmodules:
@@ -1001,24 +1000,24 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
 
     ```python
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq.gz")
 
     # target OUTPUT files for the whole workflow
     rule all:
         input:
-            expand("../results/fastqc/{sample}_1_fastqc.html", sample = SAMPLES),
-            expand("../results/fastqc/{sample}_2_fastqc.html", sample = SAMPLES),
-            expand("../results/fastqc/{sample}_1_fastqc.zip", sample = SAMPLES),
-            expand("../results/fastqc/{sample}_2_fastqc.zip", sample = SAMPLES)
+            expand("../results/fastqc/{sample}_1.trim.sub_fastqc.html", sample = SAMPLES),
+            expand("../results/fastqc/{sample}_2.trim.sub_fastqc.html", sample = SAMPLES),
+            expand("../results/fastqc/{sample}_1.trim.sub_fastqc.zip", sample = SAMPLES),
+            expand("../results/fastqc/{sample}_2.trim.sub_fastqc.zip", sample = SAMPLES)
 
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-            html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         log:
             "logs/fastqc/{sample}.log"
         threads: 2
@@ -1062,58 +1061,69 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
         ```bash
         Building DAG of jobs...
         Job stats:
-        job       count    min threads    max threads
-        ------  -------  -------------  -------------
-        all           1              1              1
-        fastqc        3              2              2
-        total         4              1              2
+        job       count
+        ------  -------
+        all           1
+        fastqc        3
+        total         4
 
 
-        [Wed May 11 12:16:46 2022]
+        [Mon Nov 20 22:58:45 2023]
         rule fastqc:
-            input: ../../data/NA24695_1.fastq.gz, ../../data/NA24695_2.fastq.gz
-            output: ../results/fastqc/NA24695_1_fastqc.html, ../results/fastqc/NA24695_2_fastqc.html, ../results/fastqc/NA24695_1_fastqc.zip, ../results/fastqc/NA24695_2_fastqc.zip
-            log: logs/fastqc/NA24695.log
-            jobid: 2
-            wildcards: sample=NA24695
-            threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
-
-
-        [Wed May 11 12:16:46 2022]
-        rule fastqc:
-            input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
-            output: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
-            log: logs/fastqc/NA24631.log
-            jobid: 1
-            wildcards: sample=NA24631
-            threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
-
-
-        [Wed May 11 12:16:46 2022]
-        rule fastqc:
-            input: ../../data/NA24694_1.fastq.gz, ../../data/NA24694_2.fastq.gz
-            output: ../results/fastqc/NA24694_1_fastqc.html, ../results/fastqc/NA24694_2_fastqc.html, ../results/fastqc/NA24694_1_fastqc.zip, ../results/fastqc/NA24694_2_fastqc.zip
-            log: logs/fastqc/NA24694.log
+            input: ../../data/trimmed_fastq_small/SRR2584863_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2584863_2.trim.sub.fastq
+            output: ../results/fastqc/SRR2584863_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.      sub_fastqc.zip, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip
+            log: logs/fastqc/SRR2584863.log
             jobid: 3
-            wildcards: sample=NA24694
+            reason: Missing output files: ../results/fastqc/SRR2584863_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.html, ../results/fastqc/      SRR2584863_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip
+            wildcards: sample=SRR2584863
             threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
+            resources: tmpdir=/dev/shm/jobs/41187219
 
 
-        [Wed May 11 12:16:46 2022]
+        [Mon Nov 20 22:58:45 2023]
+        rule fastqc:
+            input: ../../data/trimmed_fastq_small/SRR2589044_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2589044_2.trim.sub.fastq
+            output: ../results/fastqc/SRR2589044_1.trim.sub_fastqc.html, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.html, ../results/fastqc/SRR2589044_1.trim.      sub_fastqc.zip, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.zip
+            log: logs/fastqc/SRR2589044.log
+            jobid: 1
+            reason: Missing output files: ../results/fastqc/SRR2589044_2.trim.sub_fastqc.html, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.zip, ../results/fastqc/       SRR2589044_1.trim.sub_fastqc.html, ../results/fastqc/SRR2589044_1.trim.sub_fastqc.zip
+            wildcards: sample=SRR2589044
+            threads: 2
+            resources: tmpdir=/dev/shm/jobs/41187219
+
+
+        [Mon Nov 20 22:58:45 2023]
+        rule fastqc:
+            input: ../../data/trimmed_fastq_small/SRR2584866_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2584866_2.trim.sub.fastq
+            output: ../results/fastqc/SRR2584866_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584866_1.trim.      sub_fastqc.zip, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.zip
+            log: logs/fastqc/SRR2584866.log
+            jobid: 2
+            reason: Missing output files: ../results/fastqc/SRR2584866_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.zip, ../results/fastqc/        SRR2584866_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584866_1.trim.sub_fastqc.html
+            wildcards: sample=SRR2584866
+            threads: 2
+            resources: tmpdir=/dev/shm/jobs/41187219
+
+
+        [Mon Nov 20 22:58:45 2023]
         localrule all:
-            input: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24695_1_fastqc.html, ../results/fastqc/NA24694_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24695_2_fastqc.html, ../results/fastqc/NA24694_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24695_1_fastqc.zip, ../results/fastqc/NA24694_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip, ../results/fastqc/NA24695_2_fastqc.zip, ../results/fastqc/NA24694_2_fastqc.zip
+            input: ../results/fastqc/SRR2589044_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584866_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.       sub_fastqc.html, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_2.  trim.sub_fastqc.html, ../results/fastqc/SRR2589044_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584866_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_1.        trim.sub_fastqc.zip, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_2.        trim.sub_fastqc.zip
             jobid: 0
-            resources: tmpdir=/dev/shm/jobs/26763281
+            reason: Input files updated by another job: ../results/fastqc/SRR2589044_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2589044_1.trim.sub_fastqc.html, ../        results/fastqc/SRR2584866_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip, ../       results/fastqc/SRR2584866_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.  zip, ../results/fastqc/SRR2584866_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.        html, ../results/fastqc/SRR2589044_1.trim.sub_fastqc.zip
+            resources: tmpdir=/dev/shm/jobs/41187219
 
         Job stats:
-        job       count    min threads    max threads
-        ------  -------  -------------  -------------
-        all           1              1              1
-        fastqc        3              2              2
-        total         4              1              2
+        job       count
+        ------  -------
+        all           1
+        fastqc        3
+        total         4
+
+        Reasons:
+            (check individual jobs above for details)
+            input files updated by another job:
+                all
+            missing output files:
+                fastqc
 
         This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
         ```
