@@ -57,10 +57,11 @@
 
     **The workflows we will create:**
 
-    - [Basic demo workflow](https://github.com/nesi/snakemake_workshop/tree/main/basic_demo_workflow)
-    - [Leveled up demo workflow](https://github.com/nesi/snakemake_workshop/tree/main/leveled_up_demo_workflow)
+    - [Basic demo workflow](https://github.com/otagobioinformaticsspringschool/snakemake_workshop/tree/main/basic_demo_workflow)
+    - [Leveled up demo workflow](https://github.com/otagobioinformaticsspringschool/snakemake_workshop/tree/main/leveled_up_demo_workflow)
 
     **Appendices:**
 
+    - [Introduction to SLURM scheduling](./workshop_material/supplementary/99_intro_to_slurm.md)
     - [Setup for running on your machine using conda](./workshop_material/supplementary/99_appendix_setup_on_your_machine.md)
     - [Use conda environments](./workshop_material/supplementary/99_appendix_use_conda_environments.md)
