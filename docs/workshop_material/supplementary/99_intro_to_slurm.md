@@ -144,34 +144,8 @@ There are a number of different environment module implementations commonly used
     $ module switch CURRENT_MODULE DESIRED_MODULE
     ```
 
-!!! laptopcode "Demo  - Use of login node and modules"
 
-    - Navigate to  **hpc-and-slurm** directory 
-    ```bash
-    cd ~/mgss/hpc-and-slurm
-    ```
-    - Run `ls -F` command to list the file/directories in this directory. There are four files and a directory 
-    ```bash
-    blast.slurm*  Exercise/  mm-first.faa  mm-protein.faa  mm-second.faa
-    ```
-    - `mm-protein.faa` is a mouse RefSeq protein data set with 64,599 sequences.. `mm-first.faa` and `mm-second.faa` are subsets of `mm-protein.faa`
-        - `mm-first.faa` contains the first two sequences whereas `mm-second.faa` has the first 96 sequences. 
-        - Let's BLAST these two sequences against the `swissprot` databae ( technically, we should be using `refseq_protein` database for this but it is substantially larger than `swissprot` .i.e. Not suitable for a quick demo)
-    ```bash  title="load modules"
-    module purge
-    module load BLASTDB/2023-07
-    module load BLAST/2.13.0-GCC-11.3.0
-    ```
-    ```bash title="This will take  ~ 10 seconds"
-    blastp -query mm-first.faa -db swissprot
-    ```
-    ```bash title="This will take ~3.5 minutes"
-    blastp -query mm-second.faa -db swissprot
-    ```
-    !!! clipboard-question ""
 
-        - Runtime for `mm-second.faa` is starting to demonstrate the limitation of running this query interactively on "login node". If we want to query `mm-protein.faa` which has 54503 more sequences than `mm-second.faa`, we will need access to more compute resources (**Compute nodes**) and ideally a non-interacive method where we don't have to leave the desktop/laptop on. In other words, a "Remote" mechanism
-        - Both of these problems can be solved with the help of a HPC "Scheduler"
 ## Working with job scheduler
 
 <center>![image](../images/scheduler_image.png){width="500"}</center>
