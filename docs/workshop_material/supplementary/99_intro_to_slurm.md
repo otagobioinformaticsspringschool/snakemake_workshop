@@ -1,6 +1,6 @@
 # Introduction: HPC and job scheduler
 
-** Originally from https://genomicsaotearoa.github.io/metagenomics_summer_school/day1/ex2_1_intro_to_scheduler/ **
+**Originally from https://genomicsaotearoa.github.io/metagenomics_summer_school/day1/ex2_1_intro_to_scheduler/**
 
 <center>![image](../images/scaling.png){width="300"}</center>
 
