@@ -60,4 +60,4 @@ At each section of the workshop you can find a drop down box under "Current snak
 
 
 
-<p align="center"><b><a class="btn" href="https://nesi.github.io/snakemake_workshop/" style="background: var(--bs-dark);font-weight:bold">Back to homepage</a></b></p>
+<p align="center"><b><a class="btn" href="https://otagobioinformaticsspringschool.github.io/snakemake_workshop/" style="background: var(--bs-dark);font-weight:bold">Back to homepage</a></b></p>
