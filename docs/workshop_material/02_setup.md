@@ -67,22 +67,33 @@ More details about environment modules can be found on the NeSI support [page](h
 
     You can also run `module list` to see the list of modules that are currently loaded.
 
-## Clone this repo
+## Get the data
 
-Clone this repo with the following:
+We'll use the data from the DNA variant calling workshop yesterday
 
 !!! terminal "code"
 
     ```bash
-    git clone https://github.com/otagobioinformatics/snakemake_workshop.git
+    cd ~/obss_2023/intro_snakemake
+    mkdir data
+    curl -L -o sub.tar.gz https://ndownloader.figshare.com/files/14418248 
+    tar -xzf sub.tar.gz
+    mv sub/ data/trimmed_fastq_small
+    cp -r ~/obss_2023/genomic_dna/data/ref_genome data/
     ```
-    ```bash
-    cd snakemake_workshop
-    ```
-    !!! info ""
 
-        See the [Git Guides](https://github.com/git-guides/git-clone) for information on cloning a repo
+??? info "Initialise Git (optional but recommended)"
 
+    As we're going to be incrementally developing our scripts, we can also take the opportunity to place them under version control from the start. Remember to ignore the data directory
+
+    !!! terminal "code"
+
+        ```bash
+        git init
+        echo "data/" >> .gitignore
+
+        ```
+    Once you create your scripts and get them to work, remember to `add` and `commit` so that you have snapshots to fall back to if needed
 ---
 
 <p align="center"><b><a class="btn" href="https://otagobioinformaticsspringschool.github.io/snakemake_workshop/" style="background: var(--bs-dark);font-weight:bold">Back to homepage</a></b></p>

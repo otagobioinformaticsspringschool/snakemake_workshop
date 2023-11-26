@@ -41,6 +41,9 @@ We have paired end sequencing data for three samples `NA24631` to process in the
 Workflow file structure:
 
 ```bash
+data/
+    |_______ref_genome/
+    |_______trimmed_fastq_small/
 demo_workflow/
       |_______results/
       |_______workflow/
@@ -62,6 +65,13 @@ Create this file structure and our main Snakefile with:
     touch demo_workflow/workflow/Snakefile
     ```
 
+??? info "Add snakefile to git (optional recommended)"
+
+    ```bash
+    git add deme_worflow/workflow/Snakefile
+    git commit -m 'start of snakefile'
+    ```
+
 Now you should have the very beginnings of your Snakemake workflow in a `demo_workflow` directory. Let's have a look:
 
 !!! terminal "code"
@@ -75,8 +85,8 @@ Now you should have the very beginnings of your Snakemake workflow in a `demo_wo
 
         ```bash
         total 1.0K
-        drwxrws---+ 2 lkemp nesi99991 4.0K May 11 12:07 results
-        drwxrws---+ 2 lkemp nesi99991 4.0K May 11 12:07 workflow
+        drwxrws---+ 2 murray.cadzow nesi02659 4.0K May 11 12:07 results
+        drwxrws---+ 2 murray.cadzow nesi02659 4.0K May 11 12:07 workflow
         ```
 
 <br>
@@ -120,54 +130,54 @@ First lets run the first step in our workflow ([fastqc](https://www.bioinformati
 
     Run fastqc directly on the command line on one of the samples
     ```bash
-    fastqc ./data/NA24631_1.fastq.gz ./data/NA24631_2.fastq.gz -o ./fastqc_test -t 2
+    fastqc ./data/trimmed_fastq_small/SRR2584863_1.trim.sub_fastq ./data/trimmed_fastq_small/SRR2584863_2.trim.sub_fastqc -o ./fastqc_test -t 2
     ```
 
     ??? success "output"
 
         ```bash
-        Started analysis of NA24631_1.fastq.gz
-        Approx 5% complete for NA24631_1.fastq.gz
-        Approx 10% complete for NA24631_1.fastq.gz
-        Approx 15% complete for NA24631_1.fastq.gz
-        Approx 20% complete for NA24631_1.fastq.gz
-        Approx 25% complete for NA24631_1.fastq.gz
-        Approx 30% complete for NA24631_1.fastq.gz
-        Approx 35% complete for NA24631_1.fastq.gz
-        Approx 40% complete for NA24631_1.fastq.gz
-        Approx 45% complete for NA24631_1.fastq.gz
-        Approx 50% complete for NA24631_1.fastq.gz
-        Approx 55% complete for NA24631_1.fastq.gz
-        Approx 60% complete for NA24631_1.fastq.gz
-        Started analysis of NA24631_2.fastq.gz
-        Approx 65% complete for NA24631_1.fastq.gz
-        Approx 5% complete for NA24631_2.fastq.gz
-        Approx 70% complete for NA24631_1.fastq.gz
-        Approx 10% complete for NA24631_2.fastq.gz
-        Approx 75% complete for NA24631_1.fastq.gz
-        Approx 15% complete for NA24631_2.fastq.gz
-        Approx 80% complete for NA24631_1.fastq.gz
-        Approx 20% complete for NA24631_2.fastq.gz
-        Approx 25% complete for NA24631_2.fastq.gz
-        Approx 85% complete for NA24631_1.fastq.gz
-        Approx 90% complete for NA24631_1.fastq.gz
-        Approx 30% complete for NA24631_2.fastq.gz
-        Approx 35% complete for NA24631_2.fastq.gz
-        Approx 95% complete for NA24631_1.fastq.gz
-        Approx 40% complete for NA24631_2.fastq.gz
-        Analysis complete for NA24631_1.fastq.gz
-        Approx 45% complete for NA24631_2.fastq.gz
-        Approx 50% complete for NA24631_2.fastq.gz
-        Approx 55% complete for NA24631_2.fastq.gz
-        Approx 60% complete for NA24631_2.fastq.gz
-        Approx 65% complete for NA24631_2.fastq.gz
-        Approx 70% complete for NA24631_2.fastq.gz
-        Approx 75% complete for NA24631_2.fastq.gz
-        Approx 80% complete for NA24631_2.fastq.gz
-        Approx 85% complete for NA24631_2.fastq.gz
-        Approx 90% complete for NA24631_2.fastq.gz
-        Approx 95% complete for NA24631_2.fastq.gz
-        Analysis complete for NA24631_2.fastq.gz
+        Started analysis of SRR2584863_1.trim.sub_fastq
+        Approx 5% complete for SRR2584863_1.trim.sub_fastq
+        Approx 10% complete for SRR2584863_1.trim.sub_fastq
+        Approx 15% complete for SRR2584863_1.trim.sub_fastq
+        Approx 20% complete for SRR2584863_1.trim.sub_fastq
+        Approx 25% complete for SRR2584863_1.trim.sub_fastq
+        Approx 30% complete for SRR2584863_1.trim.sub_fastq
+        Approx 35% complete for SRR2584863_1.trim.sub_fastq
+        Approx 40% complete for SRR2584863_1.trim.sub_fastq
+        Approx 45% complete for SRR2584863_1.trim.sub_fastq
+        Approx 50% complete for SRR2584863_1.trim.sub_fastq
+        Approx 55% complete for SRR2584863_1.trim.sub_fastq
+        Approx 60% complete for SRR2584863_1.trim.sub_fastq
+        Started analysis of SRR2584863_2.trim.sub_fastq
+        Approx 65% complete for SRR2584863_1.trim.sub_fastq
+        Approx 5% complete for SRR2584863_2.trim.sub_fastq
+        Approx 70% complete for SRR2584863_1.trim.sub_fastq
+        Approx 10% complete for SRR2584863_2.trim.sub_fastq
+        Approx 75% complete for SRR2584863_1.trim.sub_fastq
+        Approx 15% complete for SRR2584863_2.trim.sub_fastq
+        Approx 80% complete for SRR2584863_1.trim.sub_fastq
+        Approx 20% complete for SRR2584863_2.trim.sub_fastq
+        Approx 25% complete for SRR2584863_2.trim.sub_fastq
+        Approx 85% complete for SRR2584863_1.trim.sub_fastq
+        Approx 90% complete for SRR2584863_1.trim.sub_fastq
+        Approx 30% complete for SRR2584863_2.trim.sub_fastq
+        Approx 35% complete for SRR2584863_2.trim.sub_fastq
+        Approx 95% complete for SRR2584863_1.trim.sub_fastq
+        Approx 40% complete for SRR2584863_2.trim.sub_fastq
+        Analysis complete for SRR2584863_1.trim.sub_fastq
+        Approx 45% complete for SRR2584863_2.trim.sub_fastq
+        Approx 50% complete for SRR2584863_2.trim.sub_fastq
+        Approx 55% complete for SRR2584863_2.trim.sub_fastq
+        Approx 60% complete for SRR2584863_2.trim.sub_fastq
+        Approx 65% complete for SRR2584863_2.trim.sub_fastq
+        Approx 70% complete for SRR2584863_2.trim.sub_fastq
+        Approx 75% complete for SRR2584863_2.trim.sub_fastq
+        Approx 80% complete for SRR2584863_2.trim.sub_fastq
+        Approx 85% complete for SRR2584863_2.trim.sub_fastq
+        Approx 90% complete for SRR2584863_2.trim.sub_fastq
+        Approx 95% complete for SRR2584863_2.trim.sub_fastq
+        Analysis complete for SRR2584863_2.trim.sub_fastq
         ```
 
     <br>
@@ -181,10 +191,10 @@ First lets run the first step in our workflow ([fastqc](https://www.bioinformati
 
         ```bash
         total 2.5M
-        -rw-rw----+ 1 lkemp nesi99991 718K May 11 12:08 NA24631_1_fastqc.html
-        -rw-rw----+ 1 lkemp nesi99991 475K May 11 12:08 NA24631_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 726K May 11 12:08 NA24631_2_fastqc.html
-        -rw-rw----+ 1 lkemp nesi99991 479K May 11 12:08 NA24631_2_fastqc.zip
+        -rw-rw----+ 1 murray.cadzow nesi02659 718K May 11 12:08 SRR2584863_1.trim.sub_fastqc.html
+        -rw-rw----+ 1 murray.cadzow nesi02659 475K May 11 12:08 SRR2584863_1.trim.sub_fastqc.zip
+        -rw-rw----+ 1 murray.cadzow nesi02659 726K May 11 12:08 SRR2584863_2.trim.sub_fastqc.html
+        -rw-rw----+ 1 murray.cadzow nesi02659 479K May 11 12:08 SRR2584863_2.trim.sub_fastqc.zip
         ```
 
 <br>
@@ -1737,7 +1747,7 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
     ```
     ```bash
     # run again on the cluster
-    snakemake --cluster "sbatch --time 00:10:00 --mem 512MB --cpus-per-task 8 --account nesi99991" --jobs 10 --use-envmodules
+    snakemake --cluster "sbatch --time 00:10:00 --mem 512MB --cpus-per-task 8 --account nesi02659" --jobs 10 --use-envmodules
     ```
 
     ??? success "output"
@@ -1745,173 +1755,141 @@ In addition, you need to specify a maximum number of concurrent jobs using `--jo
         ```bash
         Building DAG of jobs...
         Using shell: /usr/bin/bash
-        Provided cores: 4
-        Rules claiming more threads will be scaled down.
+        Provided cluster nodes: 10
         Job stats:
-        job            count    min threads    max threads
-        -----------  -------  -------------  -------------
-        all                1              1              1
-        fastqc             3              2              2
-        multiqc            1              1              1
-        trim_galore        3              2              2
-        total              8              1              2
+        job          count
+        ---------  -------
+        all              1
+        bwa_align        3
+        fastqc           3
+        multiqc          1
+        total            8
 
         Select jobs to execute...
 
-        [Wed May 11 12:26:39 2022]
-        rule fastqc:
-            input: ../../data/NA24694_1.fastq.gz, ../../data/NA24694_2.fastq.gz
-            output: ../results/fastqc/NA24694_1_fastqc.html, ../results/fastqc/NA24694_2_fastqc.html, ../results/fastqc/NA24694_1_fastqc.zip, ../results/fastqc/NA24694_2_fastqc.zip
-            log: logs/fastqc/NA24694.log
-            jobid: 4
-            wildcards: sample=NA24694
-            threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
-
-        Activating environment modules: FastQC/0.11.9
-
-        [Wed May 11 12:26:39 2022]
-        rule trim_galore:
-            input: ../../data/NA24694_1.fastq.gz, ../../data/NA24694_2.fastq.gz
-            output: ../results/trimmed/NA24694_1_val_1.fq.gz, ../results/trimmed/NA24694_2_val_2.fq.gz
-            log: logs/trim_galore/NA24694.log
+        [Sun Nov 26 02:45:58 2023]
+        rule bwa_align:
+            input: ../../data/trimmed_fastq_small/SRR2584863_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2584863_2.trim.sub.fastq, ../../data/ref_genome/ecoli_rel606.fasta
+            output: ../results/sam/SRR2584863.sam
+            log: logs/bwa/SRR2584863.bwa.log
             jobid: 7
-            wildcards: sample=NA24694
+            reason: Missing output files: ../results/sam/SRR2584863.sam
+            wildcards: sample=SRR2584863
             threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
+            resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
 
-        Activating environment modules: TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1
+        Submitted job 7 with external jobid 'Submitted batch job 41492185'.
 
-        The following modules were not unloaded:
-           (Use "module --force purge" to unload all):
-
-          1) XALT/minimal   2) slurm   3) NeSI
-
-        The following modules were not unloaded:
-           (Use "module --force purge" to unload all):
-
-          1) XALT/minimal   2) slurm   3) NeSI
-        [Wed May 11 12:26:44 2022]
-        Finished job 4.
-        1 of 8 steps (12%) done
-        Select jobs to execute...
-
-        [Wed May 11 12:26:44 2022]
+        [Sun Nov 26 02:45:58 2023]
         rule fastqc:
-            input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
-            output: ../results/fastqc/NA24631_1_fastqc.html, ../results/fastqc/NA24631_2_fastqc.html, ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip
-            log: logs/fastqc/NA24631.log
+            input: ../../data/trimmed_fastq_small/SRR2589044_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2589044_2.trim.sub.fastq
+            output: ../results/fastqc/SRR2589044_1.trim.sub_fastqc.html, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.html, ../results/fastqc/SRR2589044_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.zip
+            log: logs/fastqc/SRR2589044.log
             jobid: 2
-            wildcards: sample=NA24631
+            reason: Missing output files: ../results/fastqc/SRR2589044_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.zip
+            wildcards: sample=SRR2589044
             threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
+            resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
 
-        Activating environment modules: FastQC/0.11.9
+        Submitted job 2 with external jobid 'Submitted batch job 41492186'.
 
-        The following modules were not unloaded:
-           (Use "module --force purge" to unload all):
-
-          1) XALT/minimal   2) slurm   3) NeSI
-        [Wed May 11 12:26:47 2022]
-        Finished job 7.
-        2 of 8 steps (25%) done
-        Select jobs to execute...
-
-        [Wed May 11 12:26:47 2022]
-        rule trim_galore:
-            input: ../../data/NA24631_1.fastq.gz, ../../data/NA24631_2.fastq.gz
-            output: ../results/trimmed/NA24631_1_val_1.fq.gz, ../results/trimmed/NA24631_2_val_2.fq.gz
-            log: logs/trim_galore/NA24631.log
-            jobid: 5
-            wildcards: sample=NA24631
-            threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
-
-        Activating environment modules: TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1
-
-        The following modules were not unloaded:
-           (Use "module --force purge" to unload all):
-
-          1) XALT/minimal   2) slurm   3) NeSI
-        [Wed May 11 12:26:50 2022]
-        Finished job 2.
-        3 of 8 steps (38%) done
-        Select jobs to execute...
-
-        [Wed May 11 12:26:50 2022]
+        [Sun Nov 26 02:45:58 2023]
         rule fastqc:
-            input: ../../data/NA24695_1.fastq.gz, ../../data/NA24695_2.fastq.gz
-            output: ../results/fastqc/NA24695_1_fastqc.html, ../results/fastqc/NA24695_2_fastqc.html, ../results/fastqc/NA24695_1_fastqc.zip, ../results/fastqc/NA24695_2_fastqc.zip
-            log: logs/fastqc/NA24695.log
+            input: ../../data/trimmed_fastq_small/SRR2584866_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2584866_2.trim.sub.fastq
+            output: ../results/fastqc/SRR2584866_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584866_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.zip
+            log: logs/fastqc/SRR2584866.log
             jobid: 3
-            wildcards: sample=NA24695
+            reason: Missing output files: ../results/fastqc/SRR2584866_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2584866_1.trim.sub_fastqc.zip
+            wildcards: sample=SRR2584866
             threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
+            resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
 
-        Activating environment modules: FastQC/0.11.9
+        Submitted job 3 with external jobid 'Submitted batch job 41492187'.
 
-        The following modules were not unloaded:
-           (Use "module --force purge" to unload all):
+        [Sun Nov 26 02:45:58 2023]
+        rule bwa_align:
+            input: ../../data/trimmed_fastq_small/SRR2589044_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2589044_2.trim.sub.fastq, ../../data/ref_genome/ecoli_rel606.fasta
+            output: ../results/sam/SRR2589044.sam
+            log: logs/bwa/SRR2589044.bwa.log
+            jobid: 5
+            reason: Missing output files: ../results/sam/SRR2589044.sam
+            wildcards: sample=SRR2589044
+            threads: 2
+            resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
 
-          1) XALT/minimal   2) slurm   3) NeSI
-        [Wed May 11 12:26:54 2022]
-        Finished job 3.
-        4 of 8 steps (50%) done
-        Select jobs to execute...
+        Submitted job 5 with external jobid 'Submitted batch job 41492188'.
 
-        [Wed May 11 12:26:54 2022]
-        rule trim_galore:
-            input: ../../data/NA24695_1.fastq.gz, ../../data/NA24695_2.fastq.gz
-            output: ../results/trimmed/NA24695_1_val_1.fq.gz, ../results/trimmed/NA24695_2_val_2.fq.gz
-            log: logs/trim_galore/NA24695.log
+        [Sun Nov 26 02:45:58 2023]
+        rule bwa_align:
+            input: ../../data/trimmed_fastq_small/SRR2584866_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2584866_2.trim.sub.fastq, ../../data/ref_genome/ecoli_rel606.fasta
+            output: ../results/sam/SRR2584866.sam
+            log: logs/bwa/SRR2584866.bwa.log
             jobid: 6
-            wildcards: sample=NA24695
+            reason: Missing output files: ../results/sam/SRR2584866.sam
+            wildcards: sample=SRR2584866
             threads: 2
-            resources: tmpdir=/dev/shm/jobs/26763281
+            resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
 
-        Activating environment modules: TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1
+        Submitted job 6 with external jobid 'Submitted batch job 41492189'.
 
-        The following modules were not unloaded:
-           (Use "module --force purge" to unload all):
+        [Sun Nov 26 02:45:58 2023]
+        rule fastqc:
+            input: ../../data/trimmed_fastq_small/SRR2584863_1.trim.sub.fastq, ../../data/trimmed_fastq_small/SRR2584863_2.trim.sub.fastq
+            output: ../results/fastqc/SRR2584863_1.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.html, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip
+            log: logs/fastqc/SRR2584863.log
+            jobid: 4
+            reason: Missing output files: ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip
+            wildcards: sample=SRR2584863
+            threads: 2
+            resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
 
-          1) XALT/minimal   2) slurm   3) NeSI
-        [Wed May 11 12:26:56 2022]
+        Submitted job 4 with external jobid 'Submitted batch job 41492190'.
+        [Sun Nov 26 02:46:18 2023]
+        Finished job 7.
+        1 of 8 steps (12%) done
+        [Sun Nov 26 02:46:18 2023]
+        Finished job 2.
+        2 of 8 steps (25%) done
+        [Sun Nov 26 02:46:18 2023]
+        Finished job 3.
+        3 of 8 steps (38%) done
+        [Sun Nov 26 02:46:18 2023]
         Finished job 5.
+        4 of 8 steps (50%) done
+        [Sun Nov 26 02:46:18 2023]
+        Finished job 6.
         5 of 8 steps (62%) done
+        [Sun Nov 26 02:46:18 2023]
+        Finished job 4.
+        6 of 8 steps (75%) done
         Select jobs to execute...
 
-        [Wed May 11 12:26:56 2022]
+        [Sun Nov 26 02:46:18 2023]
         rule multiqc:
-            input: ../results/fastqc/NA24631_1_fastqc.zip, ../results/fastqc/NA24695_1_fastqc.zip, ../results/fastqc/NA24694_1_fastqc.zip, ../results/fastqc/NA24631_2_fastqc.zip, ../results/fastqc/NA24695_2_fastqc.zip, ../results/fastqc/NA24694_2_fastqc.zip
+            input: ../results/fastqc/SRR2589044_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584866_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip
             output: ../results/multiqc_report.html
             log: logs/multiqc/multiqc.log
             jobid: 1
-            resources: tmpdir=/dev/shm/jobs/26763281
+            reason: Missing output files: ../results/multiqc_report.html; Input files updated by another job: ../results/fastqc/SRR2584863_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2584866_2.trim.sub_fastqc.zip, ../results/fastqc/SRR2589044_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584863_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2584866_1.trim.sub_fastqc.zip, ../results/fastqc/SRR2589044_2.trim.sub_fastqc.zip
+            resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=<TBD>
 
-        Activating environment modules: MultiQC/1.9-gimkl-2020a-Python-3.8.2
-
-        The following modules were not unloaded:
-           (Use "module --force purge" to unload all):
-
-          1) XALT/minimal   2) slurm   3) NeSI
-        [Wed May 11 12:27:01 2022]
-        Finished job 6.
-        6 of 8 steps (75%) done
-        [Wed May 11 12:27:03 2022]
+        Submitted job 1 with external jobid 'Submitted batch job 41492195'.
+        [Sun Nov 26 02:46:48 2023]
         Finished job 1.
         7 of 8 steps (88%) done
         Select jobs to execute...
 
-        [Wed May 11 12:27:03 2022]
+        [Sun Nov 26 02:46:48 2023]
         localrule all:
-            input: ../results/multiqc_report.html, ../results/trimmed/NA24631_1_val_1.fq.gz, ../results/trimmed/NA24695_1_val_1.fq.gz, ../results/trimmed/NA24694_1_val_1.fq.gz, ../results/trimmed/NA24631_2_val_2.fq.gz, ../results/trimmed/NA24695_2_val_2.fq.gz, ../results/trimmed/NA24694_2_val_2.fq.gz
+            input: ../results/multiqc_report.html, ../results/sam/SRR2589044.sam, ../results/sam/SRR2584866.sam, ../results/sam/SRR2584863.sam
             jobid: 0
-            resources: tmpdir=/dev/shm/jobs/26763281
+            reason: Input files updated by another job: ../results/sam/SRR2589044.sam, ../results/multiqc_report.html, ../results/sam/SRR2584863.sam, ../results/sam/SRR2584866.sam
+            resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954, tmpdir=/dev/shm/jobs/41486074
 
-        [Wed May 11 12:27:03 2022]
+        [Sun Nov 26 02:46:48 2023]
         Finished job 0.
         8 of 8 steps (100%) done
-        Complete log: .snakemake/log/2022-05-11T122639.019945.snakemake.log
+        Complete log: .snakemake/log/2023-11-26T024558.566062.snakemake.log
         ```
 
 <br>
@@ -1928,14 +1906,14 @@ If you open another terminal on the HPC, you can use the `squeue` command to lis
 
 
         ```bash
-        JOBID         USER     ACCOUNT   NAME        CPUS MIN_MEM PARTITI START_TIME     TIME_LEFT STATE    NODELIST(REASON)
-        26763281      lkemp    nesi99991 spawner-jupy   4      4G interac 2022-05-11T1     7:30:33 RUNNING  wbn003
-        26763418      lkemp    nesi99991 snakejob.fas   8    512M large   2022-05-11T1        9:59 RUNNING  wbn096
-        26763419      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn096
-        26763420      lkemp    nesi99991 snakejob.fas   8    512M large   2022-05-11T1        9:59 RUNNING  wbn110
-        26763421      lkemp    nesi99991 snakejob.fas   8    512M large   2022-05-11T1        9:59 RUNNING  wbn069
-        26763422      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn070
-        26763423      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn090
+        JOBID         USER     ACCOUNT   NAME        CPUS MIN_MEM PARTITI START_TIME     TIME_LEFT STATE    NODELIST(REASON)    
+        41486074      murray.c nesi02659 spawner-jupy   2      4G interac 2023-11-25T2     3:25:34 RUNNING  wbn001              
+        41492185      murray.c nesi02659 snakejob.bwa   8    512M large   2023-11-26T0        9:56 RUNNING  wbn010              
+        41492186      murray.c nesi02659 snakejob.fas   8    512M large   2023-11-26T0        9:56 RUNNING  wbn010              
+        41492187      murray.c nesi02659 snakejob.fas   8    512M large   2023-11-26T0        9:56 RUNNING  wbn063              
+        41492188      murray.c nesi02659 snakejob.bwa   8    512M large   2023-11-26T0        9:56 RUNNING  wbn063              
+        41492189      murray.c nesi02659 snakejob.bwa   8    512M large   2023-11-26T0        9:56 RUNNING  wbn063              
+        41492190      murray.c nesi02659 snakejob.fas   8    512M large   2023-11-26T0        9:56 RUNNING  wbn063     
         ```
 
 <br>
@@ -2049,9 +2027,9 @@ You can exit the view create by `watch` by pressing CTRL+C.
 
 # Our final snakemake workflow!
 
-See [basic_demo_workflow](https://github.com/nesi/snakemake_workshop/tree/main/basic_demo_workflow) for the final Snakemake workflow we've created up to this point
+See [basic_demo_workflow](https://github.com/otagobioinformaticsspringschool/snakemake_workshop/blob/main/basic_demo_workflow/workflow/) for the final Snakemake workflow we've created up to this point
 
 ---
 
-<p align="center"><b><a class="btn" href="https://nesi.github.io/snakemake_workshop/" style="background: var(--bs-dark);font-weight:bold">Back to homepage</a></b></p>
+<p align="center"><b><a class="btn" href="https://otagobioinformaticsspringschool.github.io/snakemake_workshop/" style="background: var(--bs-dark);font-weight:bold">Back to homepage</a></b></p>
 ````
