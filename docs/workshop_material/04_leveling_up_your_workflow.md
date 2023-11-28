@@ -1202,88 +1202,7 @@ We can provide the user of our workflow more information on what is happening at
     ??? success "output"
 
         ```bash
-        Building DAG of jobs...
-        Using shell: /usr/bin/bash
-        Provided cluster nodes: 20
-        Job stats:
-        job            count    min threads    max threads
-        -----------  -------  -------------  -------------
-        all                1              1              1
-        fastqc             3              2              2
-        multiqc            1              1              1
-        trim_galore        3              2              2
-        total              8              1              2
         
-        Select jobs to execute...
-        
-        [Wed May 11 13:20:52 2022]
-        Job 4: Undertaking quality control checks ../../data/NA24694_1.fastq.gz ../../data/NA24694_2.fastq.gz
-        
-        Submitted job 4 with external jobid '26763840'.
-        
-        [Wed May 11 13:20:52 2022]
-        Job 6: Trimming using these parameter: --paired. Writing logs to logs/trim_galore/NA24695.log. Using 2 threads.
-        
-        Submitted job 6 with external jobid '26763841'.
-        
-        [Wed May 11 13:20:52 2022]
-        Job 2: Undertaking quality control checks ../../data/NA24631_1.fastq.gz ../../data/NA24631_2.fastq.gz
-        
-        Submitted job 2 with external jobid '26763842'.
-        
-        [Wed May 11 13:20:52 2022]
-        Job 3: Undertaking quality control checks ../../data/NA24695_1.fastq.gz ../../data/NA24695_2.fastq.gz
-        
-        Submitted job 3 with external jobid '26763843'.
-        
-        [Wed May 11 13:20:52 2022]
-        Job 5: Trimming using these parameter: --paired. Writing logs to logs/trim_galore/NA24631.log. Using 2 threads.
-        
-        Submitted job 5 with external jobid '26763844'.
-        
-        [Wed May 11 13:20:52 2022]
-        Job 7: Trimming using these parameter: --paired. Writing logs to logs/trim_galore/NA24694.log. Using 2 threads.
-        
-        Submitted job 7 with external jobid '26763845'.
-        [Wed May 11 13:22:08 2022]
-        Finished job 4.
-        1 of 8 steps (12%) done
-        [Wed May 11 13:22:08 2022]
-        Finished job 6.
-        2 of 8 steps (25%) done
-        [Wed May 11 13:22:08 2022]
-        Finished job 2.
-        3 of 8 steps (38%) done
-        [Wed May 11 13:22:08 2022]
-        Finished job 3.
-        4 of 8 steps (50%) done
-        Select jobs to execute...
-        
-        [Wed May 11 13:22:09 2022]
-        Job 1: Compiling a HTML report for quality control checks. Writing to ../results/multiqc_report.html.
-        
-        Submitted job 1 with external jobid '26763848'.
-        [Wed May 11 13:22:09 2022]
-        Finished job 5.
-        5 of 8 steps (62%) done
-        [Wed May 11 13:22:09 2022]
-        Finished job 7.
-        6 of 8 steps (75%) done
-        [Wed May 11 13:24:21 2022]
-        Finished job 1.
-        7 of 8 steps (88%) done
-        Select jobs to execute...
-        
-        [Wed May 11 13:24:21 2022]
-        localrule all:
-            input: ../results/multiqc_report.html, ../results/trimmed/NA24631_1_val_1.fq.gz, ../results/trimmed/NA24695_1_val_1.fq.gz, ../results/trimmed/NA24694_1_val_1.fq.gz, ../results/trimmed/NA24631_2_val_2.fq.gz, ../results/trimmed/NA24695_2_val_2.fq.gz, ../results/trimmed/NA24694_2_val_2.fq.gz
-            jobid: 0
-            resources: mem_mb=512, disk_mb=1000, tmpdir=/dev/shm/jobs/26763281, cpus=2, time_min=10
-        
-        [Wed May 11 13:24:21 2022]
-        Finished job 0.
-        8 of 8 steps (100%) done
-        Complete log: .snakemake/log/2022-05-11T132052.454902.snakemake.log
         ```
 
 
@@ -1304,19 +1223,7 @@ For example, we might not want to keep our fastqc output files since our multiqc
     ??? success "output"
 
         ```bash
-        total 4.5M
-        -rw-rw----+ 1 lkemp nesi02659 250K May 11 13:22 NA24631_1_fastqc.html
-        -rw-rw----+ 1 lkemp nesi02659 327K May 11 13:22 NA24631_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 249K May 11 13:22 NA24631_2_fastqc.html
-        -rw-rw----+ 1 lkemp nesi02659 327K May 11 13:22 NA24631_2_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 254K May 11 13:22 NA24694_1_fastqc.html
-        -rw-rw----+ 1 lkemp nesi02659 334K May 11 13:22 NA24694_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 250K May 11 13:22 NA24694_2_fastqc.html
-        -rw-rw----+ 1 lkemp nesi02659 328K May 11 13:22 NA24694_2_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 252K May 11 13:22 NA24695_1_fastqc.html
-        -rw-rw----+ 1 lkemp nesi02659 328K May 11 13:22 NA24695_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 253K May 11 13:22 NA24695_2_fastqc.html
-        -rw-rw----+ 1 lkemp nesi02659 330K May 11 13:22 NA24695_2_fastqc.zip
+        
         ```
 
 <br>
@@ -1330,23 +1237,22 @@ Let's mark all the trimmed fastq files as temporary in our Snakefile by wrapping
     configfile: "../config/config.yaml"
     
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
     
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
+            expand("../results/bam/{sample}.bam", sample = SAMPLES)
     
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-    -       html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-    +       html = temp(["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"]),
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         params:
             fastqc_params = config['PARAMS']['FASTQC']
         log:
@@ -1361,7 +1267,7 @@ Let's mark all the trimmed fastq files as temporary in our Snakefile by wrapping
       
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         params:
@@ -1375,24 +1281,37 @@ Let's mark all the trimmed fastq files as temporary in our Snakefile by wrapping
         shell:
             "multiqc {input} -o ../results/ {params.multiqc_params} &> {log}"
     
-    rule trim_galore:
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-        params:
-            "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+    -       SAM = "../results/sam/{sample}.sam"
+    +       SAM = temp("../results/sam/{sample}.sam")
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
         message:
-            "Trimming using these parameter: {params}. Writing logs to {log}. Using {threads} threads."
-        shell:
-            "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+            "Aligning reads to the reference for {wildcards.sample}"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    rule sam_bam:
+        input:
+            SAM = "../results/sam/{sample}.sam"
+        output:
+            BAM = "../results/bam/{sample}.bam"
+        params: "-S -b"
+        log: "logs/samtools/{sample}.sam.log"
+        threads: 2
+        envmodules:
+            "SAMtools/1.9-GCC-7.4.0"
+        message:
+            "Converting sam: {input} to bam: {output}"
+        shell: "samtools view {params} {input} > {output}"
     ```
 
 ??? file-code "Current snakefile:"
@@ -1402,22 +1321,22 @@ Let's mark all the trimmed fastq files as temporary in our Snakefile by wrapping
     configfile: "../config/config.yaml"
     
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
     
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
+            expand("../results/bam/{sample}.bam", sample = SAMPLES)
     
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-            html = temp(["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"]),
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         params:
             fastqc_params = config['PARAMS']['FASTQC']
         log:
@@ -1432,7 +1351,7 @@ Let's mark all the trimmed fastq files as temporary in our Snakefile by wrapping
       
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         params:
@@ -1446,24 +1365,36 @@ Let's mark all the trimmed fastq files as temporary in our Snakefile by wrapping
         shell:
             "multiqc {input} -o ../results/ {params.multiqc_params} &> {log}"
     
-    rule trim_galore:
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-        params:
-            "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+           SAM = temp("../results/sam/{sample}.sam")
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
         message:
-            "Trimming using these parameter: {params}. Writing logs to {log}. Using {threads} threads."
-        shell:
-            "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+            "Aligning reads to the reference for {wildcards.sample}"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    rule sam_bam:
+        input:
+            SAM = "../results/sam/{sample}.sam"
+        output:
+            BAM = "../results/bam/{sample}.bam"
+        params: "-S -b"
+        log: "logs/samtools/{sample}.sam.log"
+        threads: 2
+        envmodules:
+            "SAMtools/1.9-GCC-7.4.0"
+        message:
+            "Converting sam: {input} to bam: {output}"
+        shell: "samtools view {params} {input} > {output}"
     ```
     
     
@@ -1492,13 +1423,7 @@ Let's mark all the trimmed fastq files as temporary in our Snakefile by wrapping
     ??? success "output"
 
         ```bash
-        total 3.0M
-        -rw-rw----+ 1 lkemp nesi02659 327K May 11 13:26 NA24631_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 327K May 11 13:26 NA24631_2_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 334K May 11 13:26 NA24694_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 328K May 11 13:26 NA24694_2_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 328K May 11 13:26 NA24695_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi02659 330K May 11 13:26 NA24695_2_fastqc.zip
+
         ```
 
 <br>
@@ -1550,32 +1475,7 @@ Snakemake has a built in linter to support you building best practice workflows,
     ??? success "output"
 
         ```bash
-        Lints for rule fastqc (line 21, /scale_wlg_persistent/filesets/project/nesi02659/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile):
-            * Additionally specify a conda environment or container for each rule, environment modules are not enough:
-              While environment modules allow to document and deploy the required software on a certain platform, they lock your workflow in there, disabling easy reproducibility on
-              other machines that don't have exactly the same environment modules. Hence env modules (which might be beneficial in certain cluster environments), should allways be
-              complemented with equivalent conda environments.
-              Also see:
-              https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#integrated-package-management
-              https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#running-jobs-in-containers
         
-        Lints for rule multiqc (line 61, /scale_wlg_persistent/filesets/project/nesi02659/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile):
-            * Additionally specify a conda environment or container for each rule, environment modules are not enough:
-              While environment modules allow to document and deploy the required software on a certain platform, they lock your workflow in there, disabling easy reproducibility on
-              other machines that don't have exactly the same environment modules. Hence env modules (which might be beneficial in certain cluster environments), should allways be
-              complemented with equivalent conda environments.
-              Also see:
-              https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#integrated-package-management
-              https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#running-jobs-in-containers
-        
-        Lints for rule trim_galore (line 96, /scale_wlg_persistent/filesets/project/nesi02659/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile):
-            * Additionally specify a conda environment or container for each rule, environment modules are not enough:
-              While environment modules allow to document and deploy the required software on a certain platform, they lock your workflow in there, disabling easy reproducibility on
-              other machines that don't have exactly the same environment modules. Hence env modules (which might be beneficial in certain cluster environments), should allways be
-              complemented with equivalent conda environments.
-              Also see:
-              https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#integrated-package-management
-              https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#running-jobs-in-containers
         ```
 
 
