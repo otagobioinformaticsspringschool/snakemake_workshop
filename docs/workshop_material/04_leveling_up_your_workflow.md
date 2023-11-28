@@ -463,22 +463,23 @@ Once all of this is in place, we can:
     
     ```diff
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
-    
+        -    expand("../results/sam/{sample}.sam", sample = SAMPLES)
+        +    expand("../results/bam/{sample}.bam", sample = SAMPLES)
+
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-            html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         log:
             "logs/fastqc/{sample}.log"
         threads: 2
@@ -486,10 +487,10 @@ Once all of this is in place, we can:
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         log:
@@ -498,46 +499,55 @@ Once all of this is in place, we can:
             "MultiQC/1.9-gimkl-2020a-Python-3.8.2"
         shell:
             "multiqc {input} -o ../results/ &> {log}"
-    
-    rule trim_galore:
+
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-    +   params:
-    +       "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+            SAM = "../results/sam/{sample}.sam"
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
-        shell:
-    -       "trim_galore {input} -o ../results/trimmed/ --paired --cores {threads} &> {log}"
-    +       "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    + rule sam_bam:
+    +    input:
+    +        SAM = "../results/sam/{sample}.sam"
+    +    output:
+    +        BAM = "../results/bam/{sample}.bam"
+    +    params: "-S -b"
+    +    log: "logs/samtools/{sample}.sam.log"
+    +    threads: 2
+    +    envmodules:
+    +        "SAMtools/1.9-GCC-7.4.0"
+    +    shell: "samtools view {params} {input} > {output}"
     ```
     
 ??? file-code "Current snakefile:"
 
     ```python
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
-    
+            expand("../results/bam/{sample}.bam", sample = SAMPLES)
+
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-            html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         log:
             "logs/fastqc/{sample}.log"
         threads: 2
@@ -545,10 +555,10 @@ Once all of this is in place, we can:
             "FastQC/0.11.9"
         shell:
             "fastqc {input.R1} {input.R2} -o ../results/fastqc/ -t {threads} &> {log}"
-      
+
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         log:
@@ -557,23 +567,33 @@ Once all of this is in place, we can:
             "MultiQC/1.9-gimkl-2020a-Python-3.8.2"
         shell:
             "multiqc {input} -o ../results/ &> {log}"
-    
-    rule trim_galore:
+
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-        params:
-            "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+            SAM = "../results/sam/{sample}.sam"
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
-        shell:
-            "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    rule sam_bam:
+        input:
+            SAM = "../results/sam/{sample}.sam"
+        output:
+            BAM = "../results/bam/{sample}.bam"
+        params: "-S -b"
+        log: "logs/samtools/{sample}.sam.log"
+        threads: 2
+        envmodules:
+            "SAMtools/1.9-GCC-7.4.0"
+        shell: "samtools view {params} {input} > {output}"
     ```
 
 <br>
@@ -634,22 +654,22 @@ PARAMS:
 
     ```diff
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
+            expand("../results/bam/{sample}.bam", sample = SAMPLES)
     
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-            html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
     +   params:
     +       fastqc_params = config['PARAMS']['FASTQC']
         log:
@@ -663,7 +683,7 @@ PARAMS:
       
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
     +   params:
@@ -676,44 +696,54 @@ PARAMS:
     -       "multiqc {input} -o ../results/ &> {log}"
     +       "multiqc {input} -o ../results/ {params.multiqc_params} &> {log}"
     
-    rule trim_galore:
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-        params:
-            "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+            SAM = "../results/sam/{sample}.sam"
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
-        shell:
-            "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    rule sam_bam:
+        input:
+            SAM = "../results/sam/{sample}.sam"
+        output:
+            BAM = "../results/bam/{sample}.bam"
+        params: "-S -b"
+        log: "logs/samtools/{sample}.sam.log"
+        threads: 2
+        envmodules:
+            "SAMtools/1.9-GCC-7.4.0"
+        shell: "samtools view {params} {input} > {output}"
     ```
     
 ??? file-code "Current snakefile"
 
     ```python
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
-    
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
+
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
+            expand("../results/bam/{sample}.bam", sample = SAMPLES)
     
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-            html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         params:
             fastqc_params = config['PARAMS']['FASTQC']
         log:
@@ -726,7 +756,7 @@ PARAMS:
       
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         params:
@@ -738,22 +768,32 @@ PARAMS:
         shell:
             "multiqc {input} -o ../results/ {params.multiqc_params} &> {log}"
     
-    rule trim_galore:
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-        params:
-            "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+            SAM = "../results/sam/{sample}.sam"
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
-        shell:
-            "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    rule sam_bam:
+        input:
+            SAM = "../results/sam/{sample}.sam"
+        output:
+            BAM = "../results/bam/{sample}.bam"
+        params: "-S -b"
+        log: "logs/samtools/{sample}.sam.log"
+        threads: 2
+        envmodules:
+            "SAMtools/1.9-GCC-7.4.0"
+        shell: "samtools view {params} {input} > {output}"
     ```
 
 <br>
@@ -807,22 +847,22 @@ Alternatively, we can define our config file in our Snakefile in a situation whe
     + configfile: "../config/config.yaml"
     
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
     
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
+            expand("../results/bam/{sample}.bam", sample = SAMPLES)
     
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-            html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         params:
             fastqc_params = config['PARAMS']['FASTQC']
         log:
@@ -835,7 +875,7 @@ Alternatively, we can define our config file in our Snakefile in a situation whe
       
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         params:
@@ -847,22 +887,32 @@ Alternatively, we can define our config file in our Snakefile in a situation whe
         shell:
             "multiqc {input} -o ../results/ {params.multiqc_params} &> {log}"
     
-    rule trim_galore:
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-        params:
-            "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+            SAM = "../results/sam/{sample}.sam"
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
-        shell:
-            "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    rule sam_bam:
+        input:
+            SAM = "../results/sam/{sample}.sam"
+        output:
+            BAM = "../results/bam/{sample}.bam"
+        params: "-S -b"
+        log: "logs/samtools/{sample}.sam.log"
+        threads: 2
+        envmodules:
+            "SAMtools/1.9-GCC-7.4.0"
+        shell: "samtools view {params} {input} > {output}"
     ```
     
 ??? file-code "Current snakefile:"
@@ -872,13 +922,13 @@ Alternatively, we can define our config file in our Snakefile in a situation whe
     configfile: "../config/config.yaml"
     
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
     
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
+            expand("../results/bam/{sample}.bam", sample = SAMPLES)
     
     # workflow
     rule fastqc:
@@ -900,7 +950,7 @@ Alternatively, we can define our config file in our Snakefile in a situation whe
       
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         params:
@@ -912,22 +962,32 @@ Alternatively, we can define our config file in our Snakefile in a situation whe
         shell:
             "multiqc {input} -o ../results/ {params.multiqc_params} &> {log}"
     
-    rule trim_galore:
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-        params:
-            "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+            SAM = "../results/sam/{sample}.sam"
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
-        shell:
-            "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    rule sam_bam:
+        input:
+            SAM = "../results/sam/{sample}.sam"
+        output:
+            BAM = "../results/bam/{sample}.bam"
+        params: "-S -b"
+        log: "logs/samtools/{sample}.sam.log"
+        threads: 2
+        envmodules:
+            "SAMtools/1.9-GCC-7.4.0"
+        shell: "samtools view {params} {input} > {output}"
     ```
 
 <br>
@@ -963,22 +1023,22 @@ We can provide the user of our workflow more information on what is happening at
     configfile: "../config/config.yaml"
     
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
     
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
+            expand("../results/bam/{sample}.bam", sample = SAMPLES)
     
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-            html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         params:
             fastqc_params = config['PARAMS']['FASTQC']
         log:
@@ -993,7 +1053,7 @@ We can provide the user of our workflow more information on what is happening at
       
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         params:
@@ -1007,24 +1067,36 @@ We can provide the user of our workflow more information on what is happening at
         shell:
             "multiqc {input} -o ../results/ {params.multiqc_params} &> {log}"
     
-    rule trim_galore:
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-        params:
-            "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+            SAM = "../results/sam/{sample}.sam"
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
     +   message:
-    +       "Trimming using these parameter: {params}. Writing logs to {log}. Using {threads} threads."
-        shell:
-            "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+    +       "Aligning reads to the reference for {wildcards.sample}"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    rule sam_bam:
+        input:
+            SAM = "../results/sam/{sample}.sam"
+        output:
+            BAM = "../results/bam/{sample}.bam"
+        params: "-S -b"
+        log: "logs/samtools/{sample}.sam.log"
+        threads: 2
+        envmodules:
+            "SAMtools/1.9-GCC-7.4.0"
+    +   message:
+    +       "Converting sam: {input} to bam: {output}"
+        shell: "samtools view {params} {input} > {output}"
     ```
     
 ??? file-code "Current snakefile:"
@@ -1034,22 +1106,22 @@ We can provide the user of our workflow more information on what is happening at
     configfile: "../config/config.yaml"
     
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/{sample}_1.fastq.gz")
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
     
     # target OUTPUT files for the whole workflow
     rule all:
         input:
             "../results/multiqc_report.html",
-            expand(["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"], sample = SAMPLES)
+            expand("../results/bam/{sample}.bam", sample = SAMPLES)
     
     # workflow
     rule fastqc:
         input:
-            R1 = "../../data/{sample}_1.fastq.gz",
-            R2 = "../../data/{sample}_2.fastq.gz"
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq"
         output:
-            html = ["../results/fastqc/{sample}_1_fastqc.html", "../results/fastqc/{sample}_2_fastqc.html"],
-            zip = ["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"]
+            html = ["../results/fastqc/{sample}_1.trim.sub_fastqc.html", "../results/fastqc/{sample}_2.trim.sub_fastqc.html"],
+            zip = ["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"]
         params:
             fastqc_params = config['PARAMS']['FASTQC']
         log:
@@ -1064,7 +1136,7 @@ We can provide the user of our workflow more information on what is happening at
       
     rule multiqc:
         input:
-            expand(["../results/fastqc/{sample}_1_fastqc.zip", "../results/fastqc/{sample}_2_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         params:
@@ -1078,24 +1150,36 @@ We can provide the user of our workflow more information on what is happening at
         shell:
             "multiqc {input} -o ../results/ {params.multiqc_params} &> {log}"
     
-    rule trim_galore:
+    rule bwa_align:
         input:
-            ["../../data/{sample}_1.fastq.gz", "../../data/{sample}_2.fastq.gz"]
+            R1 = "../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq",
+            R2 = "../../data/trimmed_fastq_small/{sample}_2.trim.sub.fastq",
+            genome = "../../data/ref_genome/ecoli_rel606.fasta"
         output:
-            ["../results/trimmed/{sample}_1_val_1.fq.gz", "../results/trimmed/{sample}_2_val_2.fq.gz"]
-        params:
-            "--paired"
-        log:
-            "logs/trim_galore/{sample}.log"
-        envmodules:
-            "TrimGalore/0.6.7-gimkl-2020a-Python-3.8.2-Perl-5.30.1"
+            SAM = "../results/sam/{sample}.sam"
+        log: "logs/bwa/{sample}.bwa.log"
         threads: 2
         resources:
-            cpus=8
+            cpus = 8
+        envmodules:
+            "BWA/0.7.17-gimkl-2017a"
         message:
-            "Trimming using these parameter: {params}. Writing logs to {log}. Using {threads} threads."
-        shell:
-            "trim_galore {input} -o ../results/trimmed/ {params} --cores {threads} &> {log}"
+            "Aligning reads to the reference for {wildcards.sample}"
+        shell: "bwa mem -t {threads} {input.genome} {input.R1} {input.R2} > {output} 2> {log}"
+
+    rule sam_bam:
+        input:
+            SAM = "../results/sam/{sample}.sam"
+        output:
+            BAM = "../results/bam/{sample}.bam"
+        params: "-S -b"
+        log: "logs/samtools/{sample}.sam.log"
+        threads: 2
+        envmodules:
+            "SAMtools/1.9-GCC-7.4.0"
+        message:
+            "Converting sam: {input} to bam: {output}"
+        shell: "samtools view {params} {input} > {output}"
     ```
     
 <br>
