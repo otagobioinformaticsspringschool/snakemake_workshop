@@ -118,7 +118,7 @@ Update the profile `slurm/config.yaml` file as follows (using a multiline option
     +         --time {resources.time_min}
     +         --mem {resources.mem_mb}
     +         --cpus-per-task {resources.cpus}
-    +         --account nesi99991
+    +         --account nesi02659
     + default-resources: [cpus=2, mem_mb=512, time_min=10]
     cluster-cancel: scancel
     ```
@@ -192,7 +192,7 @@ Here we give more CPU resources to `trim_galore` to make it run faster.
             --time {resources.time_min}
             --mem {resources.mem_mb}
             --cpus-per-task {resources.cpus}
-            --account nesi99991
+            --account nesi02659
     default-resources: [cpus=2, mem_mb=512, time_min=10]
     cluster-cancel: scancel
     ```
@@ -276,13 +276,13 @@ Here we give more CPU resources to `trim_galore` to make it run faster.
 
         ```
         JOBID         USER     ACCOUNT   NAME        CPUS MIN_MEM PARTITI START_TIME     TIME_LEFT STATE    NODELIST(REASON)
-        26763281      lkemp    nesi99991 spawner-jupy   4      4G interac 2022-05-11T1     7:21:18 RUNNING  wbn003
-        26763492      lkemp    nesi99991 snakejob.fas   2    512M large   2022-05-11T1        9:59 RUNNING  wbn144
-        26763493      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn212
-        26763494      lkemp    nesi99991 snakejob.fas   2    512M large   2022-05-11T1        9:59 RUNNING  wbn145
-        26763495      lkemp    nesi99991 snakejob.fas   2    512M large   2022-05-11T1        9:59 RUNNING  wbn146
-        26763496      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn217
-        26763497      lkemp    nesi99991 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn229
+        26763281      lkemp    nesi02659 spawner-jupy   4      4G interac 2022-05-11T1     7:21:18 RUNNING  wbn003
+        26763492      lkemp    nesi02659 snakejob.fas   2    512M large   2022-05-11T1        9:59 RUNNING  wbn144
+        26763493      lkemp    nesi02659 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn212
+        26763494      lkemp    nesi02659 snakejob.fas   2    512M large   2022-05-11T1        9:59 RUNNING  wbn145
+        26763495      lkemp    nesi02659 snakejob.fas   2    512M large   2022-05-11T1        9:59 RUNNING  wbn146
+        26763496      lkemp    nesi02659 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn217
+        26763497      lkemp    nesi02659 snakejob.tri   8    512M large   2022-05-11T1        9:59 RUNNING  wbn229
         ```
     
 <br>
@@ -299,45 +299,45 @@ Now looking at the content of our workflow folder, it is getting cluttered with 
 
         ```bash
         total 1.8M
-        -rw-rw----+ 1 lkemp nesi99991 4.2K May 11 12:10 dag_1.png
-        -rw-rw----+ 1 lkemp nesi99991 3.8K May 11 12:13 dag_2.png
-        -rw-rw----+ 1 lkemp nesi99991  12K May 11 12:16 dag_3.png
-        -rw-rw----+ 1 lkemp nesi99991  20K May 11 12:19 dag_4.png
-        -rw-rw----+ 1 lkemp nesi99991  15K May 11 12:21 dag_5.png
-        -rw-rw----+ 1 lkemp nesi99991  12K May 11 12:23 dag_6.png
-        -rw-rw----+ 1 lkemp nesi99991  26K May 11 12:24 dag_7.png
-        drwxrws---+ 5 lkemp nesi99991 4.0K May 11 12:25 logs
-        -rw-rw----+ 1 lkemp nesi99991  11K May 11 12:24 rulegraph_1.png
-        drwxrws---+ 3 lkemp nesi99991 4.0K May 11 12:34 slurm
-        -rw-rw----+ 1 lkemp nesi99991  837 May 11 12:27 slurm-26763403.out
-        -rw-rw----+ 1 lkemp nesi99991  809 May 11 12:27 slurm-26763404.out
-        -rw-rw----+ 1 lkemp nesi99991  837 May 11 12:27 slurm-26763405.out
-        -rw-rw----+ 1 lkemp nesi99991  837 May 11 12:27 slurm-26763406.out
-        -rw-rw----+ 1 lkemp nesi99991  809 May 11 12:27 slurm-26763407.out
-        -rw-rw----+ 1 lkemp nesi99991  809 May 11 12:27 slurm-26763408.out
-        -rw-rw----+ 1 lkemp nesi99991  865 May 11 12:29 slurm-26763409.out
-        -rw-rw----+ 1 lkemp nesi99991  837 May 11 12:30 slurm-26763418.out
-        -rw-rw----+ 1 lkemp nesi99991  809 May 11 12:30 slurm-26763419.out
-        -rw-rw----+ 1 lkemp nesi99991  837 May 11 12:30 slurm-26763420.out
-        -rw-rw----+ 1 lkemp nesi99991  837 May 11 12:30 slurm-26763421.out
-        -rw-rw----+ 1 lkemp nesi99991  809 May 11 12:30 slurm-26763422.out
-        -rw-rw----+ 1 lkemp nesi99991  809 May 11 12:30 slurm-26763423.out
-        -rw-rw----+ 1 lkemp nesi99991  865 May 11 12:32 slurm-26763431.out
-        -rw-rw----+ 1 lkemp nesi99991  837 May 11 12:33 slurm-26763435.out
-        -rw-rw----+ 1 lkemp nesi99991  809 May 11 12:34 slurm-26763436.out
-        -rw-rw----+ 1 lkemp nesi99991  837 May 11 12:33 slurm-26763437.out
-        -rw-rw----+ 1 lkemp nesi99991  837 May 11 12:34 slurm-26763438.out
-        -rw-rw----+ 1 lkemp nesi99991  809 May 11 12:34 slurm-26763439.out
-        -rw-rw----+ 1 lkemp nesi99991  809 May 11 12:34 slurm-26763440.out
-        -rw-rw----+ 1 lkemp nesi99991  865 May 11 12:35 slurm-26763444.out
-        -rw-rw----+ 1 lkemp nesi99991  857 May 11 12:36 slurm-26763447.out
-        -rw-rw----+ 1 lkemp nesi99991  829 May 11 12:36 slurm-26763448.out
-        -rw-rw----+ 1 lkemp nesi99991  857 May 11 12:36 slurm-26763449.out
-        -rw-rw----+ 1 lkemp nesi99991  857 May 11 12:36 slurm-26763450.out
-        -rw-rw----+ 1 lkemp nesi99991  829 May 11 12:36 slurm-26763451.out
-        -rw-rw----+ 1 lkemp nesi99991  829 May 11 12:36 slurm-26763452.out
-        -rw-rw----+ 1 lkemp nesi99991  885 May 11 12:37 slurm-26763454.out
-        -rw-rw----+ 1 lkemp nesi99991 1.8K May 11 12:34 Snakefile
+        -rw-rw----+ 1 lkemp nesi02659 4.2K May 11 12:10 dag_1.png
+        -rw-rw----+ 1 lkemp nesi02659 3.8K May 11 12:13 dag_2.png
+        -rw-rw----+ 1 lkemp nesi02659  12K May 11 12:16 dag_3.png
+        -rw-rw----+ 1 lkemp nesi02659  20K May 11 12:19 dag_4.png
+        -rw-rw----+ 1 lkemp nesi02659  15K May 11 12:21 dag_5.png
+        -rw-rw----+ 1 lkemp nesi02659  12K May 11 12:23 dag_6.png
+        -rw-rw----+ 1 lkemp nesi02659  26K May 11 12:24 dag_7.png
+        drwxrws---+ 5 lkemp nesi02659 4.0K May 11 12:25 logs
+        -rw-rw----+ 1 lkemp nesi02659  11K May 11 12:24 rulegraph_1.png
+        drwxrws---+ 3 lkemp nesi02659 4.0K May 11 12:34 slurm
+        -rw-rw----+ 1 lkemp nesi02659  837 May 11 12:27 slurm-26763403.out
+        -rw-rw----+ 1 lkemp nesi02659  809 May 11 12:27 slurm-26763404.out
+        -rw-rw----+ 1 lkemp nesi02659  837 May 11 12:27 slurm-26763405.out
+        -rw-rw----+ 1 lkemp nesi02659  837 May 11 12:27 slurm-26763406.out
+        -rw-rw----+ 1 lkemp nesi02659  809 May 11 12:27 slurm-26763407.out
+        -rw-rw----+ 1 lkemp nesi02659  809 May 11 12:27 slurm-26763408.out
+        -rw-rw----+ 1 lkemp nesi02659  865 May 11 12:29 slurm-26763409.out
+        -rw-rw----+ 1 lkemp nesi02659  837 May 11 12:30 slurm-26763418.out
+        -rw-rw----+ 1 lkemp nesi02659  809 May 11 12:30 slurm-26763419.out
+        -rw-rw----+ 1 lkemp nesi02659  837 May 11 12:30 slurm-26763420.out
+        -rw-rw----+ 1 lkemp nesi02659  837 May 11 12:30 slurm-26763421.out
+        -rw-rw----+ 1 lkemp nesi02659  809 May 11 12:30 slurm-26763422.out
+        -rw-rw----+ 1 lkemp nesi02659  809 May 11 12:30 slurm-26763423.out
+        -rw-rw----+ 1 lkemp nesi02659  865 May 11 12:32 slurm-26763431.out
+        -rw-rw----+ 1 lkemp nesi02659  837 May 11 12:33 slurm-26763435.out
+        -rw-rw----+ 1 lkemp nesi02659  809 May 11 12:34 slurm-26763436.out
+        -rw-rw----+ 1 lkemp nesi02659  837 May 11 12:33 slurm-26763437.out
+        -rw-rw----+ 1 lkemp nesi02659  837 May 11 12:34 slurm-26763438.out
+        -rw-rw----+ 1 lkemp nesi02659  809 May 11 12:34 slurm-26763439.out
+        -rw-rw----+ 1 lkemp nesi02659  809 May 11 12:34 slurm-26763440.out
+        -rw-rw----+ 1 lkemp nesi02659  865 May 11 12:35 slurm-26763444.out
+        -rw-rw----+ 1 lkemp nesi02659  857 May 11 12:36 slurm-26763447.out
+        -rw-rw----+ 1 lkemp nesi02659  829 May 11 12:36 slurm-26763448.out
+        -rw-rw----+ 1 lkemp nesi02659  857 May 11 12:36 slurm-26763449.out
+        -rw-rw----+ 1 lkemp nesi02659  857 May 11 12:36 slurm-26763450.out
+        -rw-rw----+ 1 lkemp nesi02659  829 May 11 12:36 slurm-26763451.out
+        -rw-rw----+ 1 lkemp nesi02659  829 May 11 12:36 slurm-26763452.out
+        -rw-rw----+ 1 lkemp nesi02659  885 May 11 12:37 slurm-26763454.out
+        -rw-rw----+ 1 lkemp nesi02659 1.8K May 11 12:34 Snakefile
         ```
         
 <br>
@@ -366,7 +366,7 @@ Let's clean this and create a dedicated folder `logs/slurm` for future log files
             --mem {resources.mem_mb}
             --cpus-per-task {resources.cpus}
     +       --output logs/slurm/slurm-%j-{rule}.out
-            --account nesi99991
+            --account nesi02659
     default-resources: [cpus=2, mem_mb=512, time_min=10]
     cluster-cancel: scancel
     ```
@@ -418,7 +418,7 @@ The `--cluster-status` option is used to tell Snakemake which script to use.
             --mem {resources.mem_mb}
             --cpus-per-task {resources.cpus}
             --output logs/slurm/slurm-%j-{rule}.out
-            --account nesi99991
+            --account nesi02659
     default-resources: [cpus=2, mem_mb=512, time_min=10]
     cluster-cancel: scancel
     + cluster-status: ./status.py
@@ -435,7 +435,7 @@ The `--cluster-status` option is used to tell Snakemake which script to use.
             --mem {resources.mem_mb}
             --cpus-per-task {resources.cpus}
             --output logs/slurm/slurm-%j-{rule}.out
-            --account nesi99991
+            --account nesi02659
     default-resources: [cpus=2, mem_mb=512, time_min=10]
     cluster-cancel: scancel
     cluster-status: ./status.py
@@ -775,9 +775,9 @@ PARAMS:
     ??? failure "Didn't work? My error:"
     
         ```bash
-        KeyError in line 19 of /scale_wlg_persistent/filesets/project/nesi99991/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile:
+        KeyError in line 19 of /scale_wlg_persistent/filesets/project/nesi02659/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile:
         'PARAMS'
-          File "/scale_wlg_persistent/filesets/project/nesi99991/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile", line 19, in <module>
+          File "/scale_wlg_persistent/filesets/project/nesi02659/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile", line 19, in <module>
         ```
 
 <br>
@@ -1221,18 +1221,18 @@ For example, we might not want to keep our fastqc output files since our multiqc
 
         ```bash
         total 4.5M
-        -rw-rw----+ 1 lkemp nesi99991 250K May 11 13:22 NA24631_1_fastqc.html
-        -rw-rw----+ 1 lkemp nesi99991 327K May 11 13:22 NA24631_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 249K May 11 13:22 NA24631_2_fastqc.html
-        -rw-rw----+ 1 lkemp nesi99991 327K May 11 13:22 NA24631_2_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 254K May 11 13:22 NA24694_1_fastqc.html
-        -rw-rw----+ 1 lkemp nesi99991 334K May 11 13:22 NA24694_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 250K May 11 13:22 NA24694_2_fastqc.html
-        -rw-rw----+ 1 lkemp nesi99991 328K May 11 13:22 NA24694_2_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 252K May 11 13:22 NA24695_1_fastqc.html
-        -rw-rw----+ 1 lkemp nesi99991 328K May 11 13:22 NA24695_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 253K May 11 13:22 NA24695_2_fastqc.html
-        -rw-rw----+ 1 lkemp nesi99991 330K May 11 13:22 NA24695_2_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 250K May 11 13:22 NA24631_1_fastqc.html
+        -rw-rw----+ 1 lkemp nesi02659 327K May 11 13:22 NA24631_1_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 249K May 11 13:22 NA24631_2_fastqc.html
+        -rw-rw----+ 1 lkemp nesi02659 327K May 11 13:22 NA24631_2_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 254K May 11 13:22 NA24694_1_fastqc.html
+        -rw-rw----+ 1 lkemp nesi02659 334K May 11 13:22 NA24694_1_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 250K May 11 13:22 NA24694_2_fastqc.html
+        -rw-rw----+ 1 lkemp nesi02659 328K May 11 13:22 NA24694_2_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 252K May 11 13:22 NA24695_1_fastqc.html
+        -rw-rw----+ 1 lkemp nesi02659 328K May 11 13:22 NA24695_1_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 253K May 11 13:22 NA24695_2_fastqc.html
+        -rw-rw----+ 1 lkemp nesi02659 330K May 11 13:22 NA24695_2_fastqc.zip
         ```
 
 <br>
@@ -1409,12 +1409,12 @@ Let's mark all the trimmed fastq files as temporary in our Snakefile by wrapping
 
         ```bash
         total 3.0M
-        -rw-rw----+ 1 lkemp nesi99991 327K May 11 13:26 NA24631_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 327K May 11 13:26 NA24631_2_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 334K May 11 13:26 NA24694_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 328K May 11 13:26 NA24694_2_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 328K May 11 13:26 NA24695_1_fastqc.zip
-        -rw-rw----+ 1 lkemp nesi99991 330K May 11 13:26 NA24695_2_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 327K May 11 13:26 NA24631_1_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 327K May 11 13:26 NA24631_2_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 334K May 11 13:26 NA24694_1_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 328K May 11 13:26 NA24694_2_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 328K May 11 13:26 NA24695_1_fastqc.zip
+        -rw-rw----+ 1 lkemp nesi02659 330K May 11 13:26 NA24695_2_fastqc.zip
         ```
 
 <br>
@@ -1466,7 +1466,7 @@ Snakemake has a built in linter to support you building best practice workflows,
     ??? success "output"
 
         ```bash
-        Lints for rule fastqc (line 21, /scale_wlg_persistent/filesets/project/nesi99991/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile):
+        Lints for rule fastqc (line 21, /scale_wlg_persistent/filesets/project/nesi02659/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile):
             * Additionally specify a conda environment or container for each rule, environment modules are not enough:
               While environment modules allow to document and deploy the required software on a certain platform, they lock your workflow in there, disabling easy reproducibility on
               other machines that don't have exactly the same environment modules. Hence env modules (which might be beneficial in certain cluster environments), should allways be
@@ -1475,7 +1475,7 @@ Snakemake has a built in linter to support you building best practice workflows,
               https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#integrated-package-management
               https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#running-jobs-in-containers
         
-        Lints for rule multiqc (line 61, /scale_wlg_persistent/filesets/project/nesi99991/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile):
+        Lints for rule multiqc (line 61, /scale_wlg_persistent/filesets/project/nesi02659/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile):
             * Additionally specify a conda environment or container for each rule, environment modules are not enough:
               While environment modules allow to document and deploy the required software on a certain platform, they lock your workflow in there, disabling easy reproducibility on
               other machines that don't have exactly the same environment modules. Hence env modules (which might be beneficial in certain cluster environments), should allways be
@@ -1484,7 +1484,7 @@ Snakemake has a built in linter to support you building best practice workflows,
               https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#integrated-package-management
               https://snakemake.readthedocs.io/en/latest/snakefiles/deployment.html#running-jobs-in-containers
         
-        Lints for rule trim_galore (line 96, /scale_wlg_persistent/filesets/project/nesi99991/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile):
+        Lints for rule trim_galore (line 96, /scale_wlg_persistent/filesets/project/nesi02659/snakemake20220512/lkemp/snakemake_workshop/demo_workflow/workflow/Snakefile):
             * Additionally specify a conda environment or container for each rule, environment modules are not enough:
               While environment modules allow to document and deploy the required software on a certain platform, they lock your workflow in there, disabling easy reproducibility on
               other machines that don't have exactly the same environment modules. Hence env modules (which might be beneficial in certain cluster environments), should allways be
