@@ -14,7 +14,7 @@
 ![rulegraph_1](./images/rulegraph_1.png)
 </center>
 
-We have paired end sequencing data for three samples `NA24631` to process in the `./data` directory. Let's have a look:
+We have paired end sequencing data for three ecoli samples `SRR2584863`, `SRR2584866`, and `SRR2589044` to process in the `./data` directory. Let's have a look:
 
 !!! terminal "code"
 
@@ -1010,7 +1010,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
 
     ```python
     # define samples from data directory using wildcards
-    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq.gz")
+    SAMPLES, = glob_wildcards("../../data/trimmed_fastq_small/{sample}_1.trim.sub.fastq")
 
     # target OUTPUT files for the whole workflow
     rule all:
@@ -1247,7 +1247,7 @@ Let's scale up to run all of our samples by using [wildcards](https://snakemake.
 
     rule multiqc:
         input:
-        expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         log:
@@ -1322,7 +1322,7 @@ What happens if we only have the final target file (`../results/multiqc_report.h
 
     rule multiqc:
         input:
-        expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         log:
@@ -1362,7 +1362,7 @@ What happens if we only have the final target file (`../results/multiqc_report.h
 
     rule multiqc:
         input:
-        expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         log:
@@ -1438,7 +1438,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
 
     rule multiqc:
         input:
-        expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         log:
@@ -1482,7 +1482,7 @@ For example if only our fastqc outputs are defined as the target in `rule: all`
 
     rule multiqc:
         input:
-        expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
+            expand(["../results/fastqc/{sample}_1.trim.sub_fastqc.zip", "../results/fastqc/{sample}_2.trim.sub_fastqc.zip"], sample = SAMPLES)
         output:
             "../results/multiqc_report.html"
         log:
